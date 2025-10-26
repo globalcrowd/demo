@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 7: AI Image Analysis Workshop Resources</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .header .meta {
+            margin-top: 15px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .intro {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .resource-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .resource-card:hover::before {
+            opacity: 1;
+        }
+        
+        .resource-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .resource-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2d3748;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .resource-description {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .resource-link::after {
+            content: '→';
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .resource-card:hover .resource-link::after {
+            transform: translateX(5px);
+        }
+        
+        .workshop-info {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .workshop-info h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .workshop-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .workshop-info li {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .workshop-info li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .footer {
+            background: #f7fafc;
+            padding: 25px 30px;
+            text-align: center;
+            color: #718096;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .header .subtitle {
+                font-size: 16px;
+            }
+            
+            .resources {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 AI Image Analysis Workshop</h1>
+            <div class="subtitle">Week 7: Advanced Features - Understanding Client-Server-API Architecture</div>
+            <div class="meta">XJTLU Entrepreneur College | Digital Startup Lab</div>
+        </div>
+        
+        <div class="content">
+            <div class="intro">
+                Welcome to Week 7! This workshop demonstrates how modern web applications use AI vision APIs to analyze images. 
+                You'll learn the fundamentals of client-server architecture and see live AI-assisted development using tools like 
+                <strong>Qwen Coder, Claude Code, GitHub Copilot, Gemini CLI</strong>, or similar AI coding assistants.
+            </div>
+            
+            <div class="resources">
+                <a href="animation.html" class="resource-card">
+                    <div class="resource-icon">🎬</div>
+                    <div class="resource-title">Interactive Animation</div>
+                    <div class="resource-description">
+                        Step-by-step visualization showing how data flows from your app through your server to the AI service and back. 
+                        Use the controls to understand each stage of the process.
+                    </div>
+                    <span class="resource-link">Launch Animation</span>
+                </a>
+                
+                <a href="prompts.md" class="resource-card">
+                    <div class="resource-icon">📚</div>
+                    <div class="resource-title">Prompt Guide</div>
+                    <div class="resource-description">
+                        Complete guide with all prompts needed for the workshop. Includes explanations, code examples, and tips for building your own AI-powered features.
+                    </div>
+                    <span class="resource-link">View Guide</span>
+                </a>
+            </div>
+            
+            <div class="workshop-info">
+                <h3>📋 What You'll Learn</h3>
+                <ul>
+                    <li>How client-server-API architecture works in real applications</li>
+                    <li>Live AI-assisted development using Qwen Coder, Claude Code, GitHub Copilot, or similar tools</li>
+                    <li>Building image analysis features with Google Gemini API</li>
+                    <li>Writing effective prompts for both code generation and AI vision tasks</li>
+                    <li>How to integrate external APIs into your Django applications</li>
+                    <li>Best practices for handling API keys and environment variables</li>
+                </ul>
+            </div>
+            
+            <div class="workshop-info" style="margin-top: 20px; border-left-color: #f093fb;">
+                <h3>🛠️ Prerequisites</h3>
+                <ul>
+                    <li>Basic understanding of Python (from previous weeks)</li>
+                    <li>Familiarity with Adalo, Softr, or Bolt (optional but helpful)</li>
+                    <li>Access to an AI coding assistant (Qwen Coder, Claude Code, GitHub Copilot, Gemini CLI, Cursor, or similar)</li>
+                    <li>Google account (to get free Gemini API key during workshop)</li>
+                    <li>Open mind and willingness to experiment!</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: left;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 20px;">🤖</span>
+                    <strong style="color: #856404;">Transparency Note</strong>
+                </div>
+                <p style="color: #856404; font-size: 13px; line-height: 1.6; margin: 0;">
+                    These workshop materials (including the interactive animation and prompt guide) were created with the assistance of AI tools, 
+                    demonstrating the same AI-assisted development approach you'll learn in this workshop. This is an example of how modern developers 
+                    work efficiently by collaborating with AI assistants to create educational content and applications.
+                </p>
+            </div>
+            <p>Created for Digital Startup Lab, Week 7 Workshop<br>
+            Questions? Contact your instructor or visit the <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a></p>
+        </div>
+    </div>
+</body>
+</html>
