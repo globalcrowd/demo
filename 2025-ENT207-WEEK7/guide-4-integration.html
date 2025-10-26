@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration & APIs - AI Workshop Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .disclaimer-banner {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .disclaimer-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        
+        .disclaimer-content {
+            flex: 1;
+        }
+        
+        .disclaimer-content strong {
+            color: #856404;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .disclaimer-content p {
+            color: #856404;
+            font-size: 13px;
+            margin: 0;
+        }
+        
+        .outer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navigation a {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 15px;
+            background: #f5f7fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .navigation a:hover {
+            background: #e8ecf1;
+            transform: translateY(-2px);
+        }
+        
+        .navigation a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #5568d3;
+        }
+        
+        .nav-number {
+            background: rgba(255,255,255,0.3);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .navigation a.active .nav-number {
+            background: rgba(255,255,255,0.4);
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+        }
+        
+        .nav-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-button:hover {
+            background: #5568d3;
+            text-decoration: none;
+        }
+        
+        h1 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: #764ba2;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        h4 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+        
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        hr {
+            border: none;
+            border-top: 2px solid #e0e0e0;
+            margin: 40px 0;
+        }
+        
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .page-nav {
+            flex: 1;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .page-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-decoration: none;
+        }
+        
+        .page-nav.prev {
+            background: linear-gradient(135deg, #a8a8a8 0%, #7f7f7f 100%);
+        }
+        
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+            }
+            
+            .navigation a {
+                min-width: 100%;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .page-navigation {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="outer-container">
+        
+<div class="disclaimer-banner">
+    <div class="disclaimer-icon">⚠️</div>
+    <div class="disclaimer-content">
+        <strong>AI-Generated Learning Resource</strong>
+        <p>This guide was created with AI assistance for educational purposes. While we strive for accuracy, this is an 
+        <strong>orientation tool</strong> - not a definitive reference. We cannot fact-check everything. Please verify 
+        critical information with official documentation and ask your instructor if unsure!</p>
+    </div>
+</div>
+
+        <a href="index.html" class="back-button">← Back to Workshop Home</a>
+        <div class="navigation">
+        <a href="guide-1-setup.html">
+            <span class="nav-number">1</span>
+            <span class="nav-icon">🚀</span>
+            <span class="nav-title">Getting Started & Setup</span>
+        </a>
+        
+        <a href="guide-2-prompts.html">
+            <span class="nav-number">2</span>
+            <span class="nav-icon">💻</span>
+            <span class="nav-title">Prompts for Building</span>
+        </a>
+        
+        <a href="guide-3-features.html">
+            <span class="nav-number">3</span>
+            <span class="nav-icon">🔧</span>
+            <span class="nav-title">Adding Features & Debugging</span>
+        </a>
+        
+        <a href="guide-4-integration.html" class="active">
+            <span class="nav-number">4</span>
+            <span class="nav-icon">🔌</span>
+            <span class="nav-title">Integration & APIs</span>
+        </a>
+        
+        <a href="guide-5-resources.html">
+            <span class="nav-number">5</span>
+            <span class="nav-icon">📚</span>
+            <span class="nav-title">Resources & Tips</span>
+        </a>
+        </div>
+        <div class="container">
+            <h2 id="api-specific-notes">🔌 API-Specific Notes</h2>
+<h3 id="google-gemini-api">Google Gemini API</h3>
+<p><strong>API Key Setup:</strong></p>
+<pre><code class="language-bash"># In terminal/command prompt
+export GEMINI_API_KEY=&quot;your_key_here&quot;
+
+# Or in .env file
+GEMINI_API_KEY=your_key_here
+</code></pre>
+<p><strong>Python Code Pattern:</strong></p>
+<pre><code class="language-python">import google.generativeai as genai
+
+genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+# For images
+response = model.generate_content([
+    &quot;Your system prompt here&quot;,
+    {&quot;mime_type&quot;: &quot;image/jpeg&quot;, &quot;data&quot;: base64_image_data}
+])
+</code></pre>
+<p><strong>Free Tier:</strong> 1,500 requests per day
+<strong>Best for:</strong> Students, demos, prototypes</p>
+<hr />
+<h3 id="openai-vision-api-gpt-4-vision">OpenAI Vision API (GPT-4 Vision)</h3>
+<p><strong>API Key Setup:</strong></p>
+<pre><code class="language-bash">export OPENAI_API_KEY=&quot;your_key_here&quot;
+</code></pre>
+<p><strong>Python Code Pattern:</strong></p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+response = client.chat.completions.create(
+    model=&quot;gpt-4-vision-preview&quot;,
+    messages=[{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Your system prompt here&quot;},
+            {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: f&quot;data:image/jpeg;base64,{base64_image}&quot;}}
+        ]
+    }]
+)
+</code></pre>
+<p><strong>Pricing:</strong> Pay per use (~$0.01 per image)
+<strong>Best for:</strong> Production apps, high accuracy needs</p>
+<hr />
+<h3 id="deepseek-vision-api-if-available">DeepSeek Vision API (If Available)</h3>
+<p><strong>Status:</strong> As of early 2025, vision capabilities through DeepSeek-VL2 model
+<strong>Note:</strong> API access may be limited or through third-party platforms</p>
+<p><strong>If you have access:</strong></p>
+<pre><code class="language-python"># DeepSeek uses OpenAI-compatible format
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.getenv('DEEPSEEK_API_KEY'),
+    base_url=&quot;https://api.deepseek.com&quot;
+)
+
+# Similar usage to OpenAI
+</code></pre>
+<p><strong>Why we're NOT using it today:</strong>
+- Unclear API access for vision features
+- Recent stability issues reported
+- Limited documentation for vision endpoints</p>
+<hr />
+<h2 id="api-specific-notes_1">🔌 API-Specific Notes</h2>
+<h3 id="google-gemini-api_1">Google Gemini API</h3>
+<p><strong>API Key Setup:</strong></p>
+<pre><code class="language-bash"># In terminal/command prompt
+export GEMINI_API_KEY=&quot;your_key_here&quot;
+
+# Or in .env file
+GEMINI_API_KEY=your_key_here
+</code></pre>
+<p><strong>Python Code Pattern:</strong></p>
+<pre><code class="language-python">import google.generativeai as genai
+
+genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+# For images
+response = model.generate_content([
+    &quot;Your system prompt here&quot;,
+    {&quot;mime_type&quot;: &quot;image/jpeg&quot;, &quot;data&quot;: base64_image_data}
+])
+</code></pre>
+<p><strong>Free Tier:</strong> 1,500 requests per day
+<strong>Best for:</strong> Students, demos, prototypes</p>
+<hr />
+<h3 id="openai-vision-api-gpt-4-vision_1">OpenAI Vision API (GPT-4 Vision)</h3>
+<p><strong>API Key Setup:</strong></p>
+<pre><code class="language-bash">export OPENAI_API_KEY=&quot;your_key_here&quot;
+</code></pre>
+<p><strong>Python Code Pattern:</strong></p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+response = client.chat.completions.create(
+    model=&quot;gpt-4-vision-preview&quot;,
+    messages=[{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Your system prompt here&quot;},
+            {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: f&quot;data:image/jpeg;base64,{base64_image}&quot;}}
+        ]
+    }]
+)
+</code></pre>
+<p><strong>Pricing:</strong> Pay per use (~$0.01 per image)
+<strong>Best for:</strong> Production apps, high accuracy needs</p>
+<hr />
+<h3 id="deepseek-vision-api-if-available_1">DeepSeek Vision API (If Available)</h3>
+<p><strong>Status:</strong> As of early 2025, vision capabilities through DeepSeek-VL2 model
+<strong>Note:</strong> API access may be limited or through third-party platforms</p>
+<p><strong>If you have access:</strong></p>
+<pre><code class="language-python"># DeepSeek uses OpenAI-compatible format
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.getenv('DEEPSEEK_API_KEY'),
+    base_url=&quot;https://api.deepseek.com&quot;
+)
+
+# Similar usage to OpenAI
+</code></pre>
+<p><strong>Why we're NOT using it today:</strong>
+- Unclear API access for vision features
+- Recent stability issues reported
+- Limited documentation for vision endpoints</p>
+<hr />
+            <div class="page-navigation">
+                <a href="guide-3-features.html" class="page-nav prev">← Previous: Adding Features & Debugging</a>
+                <a href="guide-5-resources.html" class="page-nav next">Next: Resources & Tips →</a>
+            </div>
+        </div>
+        <a href="index.html" class="back-button">← Back to Workshop Home</a>
+    </div>
+</body>
+</html>
