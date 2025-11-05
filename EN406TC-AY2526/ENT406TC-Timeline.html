@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovation Module Timeline - Animated</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        svg {
+            width: 100%;
+            height: auto;
+        }
+        
+        /* Week groups animate in */
+        .week-group {
+            opacity: 0;
+            animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .week-1 { animation-delay: 0.3s; }
+        .week-2 { animation-delay: 0.7s; }
+        .week-3 { animation-delay: 1.1s; }
+        .week-4 { animation-delay: 1.5s; }
+        .week-5 { animation-delay: 1.9s; }
+        .week-6 { animation-delay: 2.3s; }
+        .deadline-1 { animation-delay: 2.5s; }
+        .deadline-2 { animation-delay: 2.7s; }
+        .end-marker { animation-delay: 2.9s; }
+        
+        /* Path drawing animation */
+        .connector-path {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: drawPath 2.5s ease-out 0.2s forwards;
+        }
+        
+        /* Flowing particles along the path */
+        .particle {
+            animation: moveParticle 4s ease-in-out infinite;
+            opacity: 0;
+        }
+        .particle-1 { animation-delay: 3s; }
+        .particle-2 { animation-delay: 3.5s; }
+        .particle-3 { animation-delay: 4s; }
+        .particle-4 { animation-delay: 4.5s; }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes drawPath {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes moveParticle {
+            0% { opacity: 0; offset-distance: 0%; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; offset-distance: 100%; }
+        }
+        
+        /* Hover effects */
+        .activity-box {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .activity-box:hover {
+            filter: brightness(1.15) drop-shadow(0 10px 20px rgba(0,0,0,0.25));
+            stroke-width: 4;
+        }
+        
+        .milestone-circle {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .milestone-circle:hover {
+            filter: brightness(1.2) drop-shadow(0 6px 12px rgba(0,0,0,0.3));
+            stroke-width: 5;
+        }
+        
+        /* Deadline pulse glow */
+        .deadline-glow {
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { 
+                filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.5));
+            }
+            50% { 
+                filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.8));
+            }
+        }
+        
+        /* Floating animation for start/end markers */
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg viewBox="0 0 1200 2200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#dc2626;stop-opacity:0.8" />
+                    <stop offset="50%" style="stop-color:#4b5563;stop-opacity:0.6" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.8" />
+                </linearGradient>
+                
+                <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="greyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6b7280;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4b5563;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                
+                <!-- Activity box gradient -->
+                <linearGradient id="activityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f9fafb;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="keyActivityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#fef2f2;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fee2e2;stop-opacity:1" />
+                </linearGradient>
+                
+                <!-- Path for particles to follow -->
+                <path id="flowPath" d="M 600 50 Q 200 300, 600 600 Q 1000 900, 600 1200 Q 200 1500, 600 1800 L 600 2100" fill="none"/>
+            </defs>
+            
+            <!-- Decorative curved connecting path -->
+            <path d="M 600 50 Q 200 300, 600 600 Q 1000 900, 600 1200 Q 200 1500, 600 1800 L 600 2100" 
+                  stroke="url(#pathGradient)" 
+                  stroke-width="6" 
+                  fill="none" 
+                  opacity="0.3"
+                  class="connector-path"/>
+            
+            <!-- Animated particles flowing along path -->
+            <circle r="8" fill="#dc2626" class="particle particle-1">
+                <animateMotion dur="4s" repeatCount="indefinite" begin="3s">
+                    <mpath href="#flowPath"/>
+                </animateMotion>
+            </circle>
+            <circle r="8" fill="#4b5563" class="particle particle-2">
+                <animateMotion dur="4s" repeatCount="indefinite" begin="3.5s">
+                    <mpath href="#flowPath"/>
+                </animateMotion>
+            </circle>
+            <circle r="8" fill="#dc2626" class="particle particle-3">
+                <animateMotion dur="4s" repeatCount="indefinite" begin="4s">
+                    <mpath href="#flowPath"/>
+                </animateMotion>
+            </circle>
+            
+            <!-- START MARKER -->
+            <g class="week-group week-1 float">
+                <rect x="350" y="20" width="500" height="70" rx="35" fill="url(#redGradient)" stroke="#991b1b" stroke-width="3"/>
+                <text x="600" y="62" text-anchor="middle" fill="white" font-size="24" font-weight="bold">
+                    START: Week 8 - November 6
+                </text>
+            </g>
+            
+            <!-- WEEK 8 -->
+            <g class="week-group week-1">
+                <circle cx="600" cy="180" r="60" fill="url(#redGradient)" class="milestone-circle" stroke="#991b1b" stroke-width="3"/>
+                <text x="600" y="172" text-anchor="middle" fill="white" font-size="22" font-weight="bold">Week 8</text>
+                <text x="600" y="195" text-anchor="middle" fill="white" font-size="16">Nov 6-7</text>
+                
+                <!-- Activities in flowing layout -->
+                <rect x="150" y="260" width="380" height="60" rx="12" fill="url(#keyActivityGradient)" stroke="#dc2626" stroke-width="3" class="activity-box"/>
+                <text x="340" y="295" text-anchor="middle" fill="#1f2937" font-size="16" font-weight="600">Choose Industry Pain Point</text>
+                
+                <rect x="560" y="260" width="480" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="800" y="285" text-anchor="middle" fill="#1f2937" font-size="15">Module Introduction &</text>
+                <text x="800" y="305" text-anchor="middle" fill="#1f2937" font-size="15">Assessment Overview</text>
+                
+                <rect x="250" y="335" width="700" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="600" y="370" text-anchor="middle" fill="#1f2937" font-size="15">Innovation Radar - Track Industry Signals</text>
+            </g>
+            
+            <!-- WEEK 9 -->
+            <g class="week-group week-2">
+                <circle cx="600" cy="480" r="55" fill="url(#greyGradient)" class="milestone-circle" stroke="#374151" stroke-width="3"/>
+                <text x="600" y="475" text-anchor="middle" fill="white" font-size="20" font-weight="bold">Week 9</text>
+                <text x="600" y="495" text-anchor="middle" fill="white" font-size="14">Nov 13-14</text>
+                
+                <rect x="150" y="555" width="400" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="350" y="590" text-anchor="middle" fill="#1f2937" font-size="15">PR Draft (Solved Future)</text>
+                
+                <rect x="580" y="555" width="470" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="815" y="590" text-anchor="middle" fill="#1f2937" font-size="15">Legal Structures & Corporate Strategy</text>
+                
+                <rect x="250" y="630" width="700" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="600" y="665" text-anchor="middle" fill="#1f2937" font-size="15">IP Fundamentals & Innovation Strategy</text>
+            </g>
+            
+            <!-- WEEK 10 -->
+            <g class="week-group week-3">
+                <circle cx="600" cy="780" r="55" fill="url(#greyGradient)" class="milestone-circle" stroke="#374151" stroke-width="3"/>
+                <text x="600" y="775" text-anchor="middle" fill="white" font-size="20" font-weight="bold">Week 10</text>
+                <text x="600" y="795" text-anchor="middle" fill="white" font-size="14">Nov 20-21</text>
+                
+                <rect x="100" y="855" width="500" height="60" rx="12" fill="url(#keyActivityGradient)" stroke="#dc2626" stroke-width="3" class="activity-box"/>
+                <text x="350" y="880" text-anchor="middle" fill="#1f2937" font-size="15" font-weight="600">Collect Stakeholder Insights</text>
+                <text x="350" y="900" text-anchor="middle" fill="#1f2937" font-size="15" font-weight="600">& Evidence</text>
+                
+                <rect x="630" y="855" width="470" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="865" y="880" text-anchor="middle" fill="#1f2937" font-size="15">Business Models &</text>
+                <text x="865" y="900" text-anchor="middle" fill="#1f2937" font-size="15">Commercialisation Pathways</text>
+                
+                <rect x="350" y="930" width="500" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="600" y="965" text-anchor="middle" fill="#1f2937" font-size="15">CW1 Consultation</text>
+            </g>
+            
+            <!-- WEEK 11 -->
+            <g class="week-group week-4">
+                <circle cx="600" cy="1080" r="55" fill="url(#greyGradient)" class="milestone-circle" stroke="#374151" stroke-width="3"/>
+                <text x="600" y="1075" text-anchor="middle" fill="white" font-size="20" font-weight="bold">Week 11</text>
+                <text x="600" y="1095" text-anchor="middle" fill="white" font-size="14">Nov 27-28</text>
+                
+                <rect x="150" y="1155" width="480" height="60" rx="12" fill="url(#keyActivityGradient)" stroke="#dc2626" stroke-width="3" class="activity-box"/>
+                <text x="390" y="1180" text-anchor="middle" fill="#1f2937" font-size="15" font-weight="600">Build System Evolution</text>
+                <text x="390" y="1200" text-anchor="middle" fill="#1f2937" font-size="15" font-weight="600">Pathway Map</text>
+                
+                <rect x="660" y="1155" width="440" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="880" y="1180" text-anchor="middle" fill="#1f2937" font-size="15">CW2 Question</text>
+                <text x="880" y="1200" text-anchor="middle" fill="#1f2937" font-size="15">Development Workshop</text>
+                
+                <rect x="250" y="1230" width="700" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="600" y="1265" text-anchor="middle" fill="#1f2937" font-size="15">Podcast Recording Techniques & Structure</text>
+            </g>
+            
+            <!-- WEEK 12 -->
+            <g class="week-group week-5">
+                <circle cx="600" cy="1380" r="60" fill="url(#redGradient)" class="milestone-circle" stroke="#991b1b" stroke-width="3"/>
+                <text x="600" y="1372" text-anchor="middle" fill="white" font-size="22" font-weight="bold">Week 12</text>
+                <text x="600" y="1395" text-anchor="middle" fill="white" font-size="16">Dec 4-5</text>
+                
+                <rect x="200" y="1460" width="380" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="390" y="1495" text-anchor="middle" fill="#1f2937" font-size="15">AI & Technology Trends in Industry</text>
+                
+                <rect x="610" y="1460" width="490" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="855" y="1495" text-anchor="middle" fill="#1f2937" font-size="15">Industry Analysis & Evidence Integration</text>
+            </g>
+            
+            <!-- CW1 DEADLINE -->
+            <g class="week-group deadline-1">
+                <rect x="150" y="1560" width="900" height="130" rx="20" fill="url(#redGradient)" stroke="#991b1b" stroke-width="4" class="deadline-glow"/>
+                <text x="600" y="1605" text-anchor="middle" fill="white" font-size="28" font-weight="bold">CW1 SUBMISSION - December 5</text>
+                <text x="600" y="1640" text-anchor="middle" fill="white" font-size="16" opacity="0.95">Task 1: Future Vision & Stakeholder Impact (~800 words)</text>
+                <text x="600" y="1670" text-anchor="middle" fill="white" font-size="16" opacity="0.95">Task 2: Strategic IP & Commercialisation (~1200 words)</text>
+            </g>
+            
+            <!-- WEEK 13 -->
+            <g class="week-group week-6">
+                <circle cx="600" cy="1800" r="55" fill="url(#greyGradient)" class="milestone-circle" stroke="#374151" stroke-width="3"/>
+                <text x="600" y="1795" text-anchor="middle" fill="white" font-size="20" font-weight="bold">Week 13</text>
+                <text x="600" y="1815" text-anchor="middle" fill="white" font-size="14">Dec 11-12</text>
+                
+                <rect x="150" y="1875" width="420" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="360" y="1900" text-anchor="middle" fill="#1f2937" font-size="15">Podcast Rehearsal &</text>
+                <text x="360" y="1920" text-anchor="middle" fill="#1f2937" font-size="15">Peer Feedback Sessions</text>
+                
+                <rect x="600" y="1875" width="500" height="60" rx="12" fill="url(#activityGradient)" stroke="#9ca3af" stroke-width="2" class="activity-box"/>
+                <text x="850" y="1910" text-anchor="middle" fill="#1f2937" font-size="15">Industry Innovation Case Study & Q&A</text>
+            </g>
+            
+            <!-- CW2 DEADLINE -->
+            <g class="week-group deadline-2">
+                <rect x="150" y="1975" width="900" height="110" rx="20" fill="url(#redGradient)" stroke="#991b1b" stroke-width="4" class="deadline-glow"/>
+                <text x="600" y="2020" text-anchor="middle" fill="white" font-size="28" font-weight="bold">CW2 SUBMISSION - December 19</text>
+                <text x="600" y="2055" text-anchor="middle" fill="white" font-size="16" opacity="0.95">Podcast Reflection: Answer 3 Questions (6-10 min) + Transcript</text>
+            </g>
+            
+            <!-- END MARKER -->
+            <g class="week-group end-marker float">
+                <rect x="350" y="2120" width="500" height="70" rx="35" fill="url(#greenGradient)" stroke="#15803d" stroke-width="3"/>
+                <text x="600" y="2162" text-anchor="middle" fill="white" font-size="24" font-weight="bold">
+                    MODULE COMPLETE
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
