@@ -667,8 +667,9 @@
                 <div>
                     <h2 className="section-title">Welcome to the FEARless Assessment Tool</h2>
                     <p className="section-description">
-                        Assess your learning space in just 10-15 minutes. Discover how <strong>Formal Environments 
-                        and Academic Regulation (FEAR)</strong> might be constraining affinity-based learning.
+                        Assess your learning space <strong>and practice</strong> in just 10-15 minutes. Discover how 
+                        <strong> Formal Environments and Academic Regulation (FEAR)</strong> might be constraining 
+                        affinity-based learning in both your physical space and pedagogical culture.
                     </p>
                     <div className="results-card">
                         <h3>✨ What You'll Get:</h3>
@@ -677,10 +678,13 @@
                                 📊 FEAR Score (Formality + Regulation)
                             </li>
                             <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
-                                🤝 Affinity Space Characteristics Rating
+                                🤝 Social Connectedness Rating (how community forms)
                             </li>
                             <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
-                                🗺️ Position on FEARless Matrix
+                                🗺️ Position on FEARless Matrix (pedagogy + space)
+                            </li>
+                            <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                🎯 Perception Gap Analysis (how you see it vs. reality)
                             </li>
                             <li style={{ padding: '10px 0' }}>
                                 💡 Actionable Recommendations
@@ -731,15 +735,21 @@
                     <div className="results-card" style={{ background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', border: '2px solid #3b82f6', marginTop: '20px' }}>
                         <h3>🎯 The Two Key Dimensions</h3>
                         
+                        <p style={{ lineHeight: '1.8', marginBottom: '15px', fontStyle: 'italic', color: '#1e40af' }}>
+                            <strong>Important:</strong> We're assessing both your <strong>space design</strong> AND your <strong>pedagogical practice</strong> - 
+                            how you and others actually use and experience the space culturally, not just its physical features.
+                        </p>
+                        
                         <div style={{ marginTop: '15px' }}>
                             <h4 style={{ color: '#1f2937', marginBottom: '10px' }}>
                                 <span className="emoji-large" style={{ animationDelay: '0s' }}>🤝</span> 
                                 Social Connectedness (X-axis)
                             </h4>
                             <p style={{ lineHeight: '1.8', marginLeft: '20px' }}>
-                                Do people collaborate, share knowledge, and form communities? 
-                                Based on Gee's affinity space principles - where expertise is distributed, 
-                                leadership is fluid, and everyone can contribute regardless of status.
+                                How do people <strong>practice</strong> learning together in this space? Is collaboration, 
+                                knowledge-sharing, and community-building happening? Based on Gee's affinity space 
+                                principles - where expertise is distributed, leadership is fluid, and everyone can 
+                                contribute regardless of status.
                             </p>
                         </div>
 
@@ -749,9 +759,9 @@
                                 Spatial Otherness (Y-axis)
                             </h4>
                             <p style={{ lineHeight: '1.8', marginLeft: '20px' }}>
-                                Does the space break free from traditional institutional norms? 
-                                Is it unconventional, creative, and different from typical classrooms? 
-                                High otherness = low FEAR (informal, flexible, unregulated).
+                                Does the space (and how it's used) break free from traditional institutional norms? 
+                                Is it unconventional, creative, and different from typical classrooms in both 
+                                <strong>design and practice</strong>? High otherness = low FEAR (informal, flexible, unregulated).
                             </p>
                         </div>
                     </div>
@@ -762,37 +772,39 @@
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '15px' }}>
                             <div style={{ padding: '15px', background: '#fee2e2', borderRadius: '8px', border: '2px solid #ef4444' }}>
                                 <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>😰</div>
-                                <strong>FEAR-full (Traditional)</strong>
+                                <strong>Bottom-Left: FEAR-full (Traditional)</strong>
                                 <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
                                     Low connectedness + Low otherness. 
-                                    Lecture halls, strict classrooms.
-                                </p>
-                            </div>
-
-                            <div style={{ padding: '15px', background: '#fef3c7', borderRadius: '8px', border: '2px solid #f59e0b' }}>
-                                <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🤝</div>
-                                <strong>Affinity Space (Formal Env)</strong>
-                                <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
-                                    High connectedness + Low otherness.
-                                    Active learning classrooms, collaborative libraries.
+                                    Traditional pedagogy AND space. Lecture halls, strict classrooms.
                                 </p>
                             </div>
 
                             <div style={{ padding: '15px', background: '#e0e7ff', borderRadius: '8px', border: '2px solid #6366f1' }}>
                                 <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🎨</div>
-                                <strong>Heterotopia (Regulated)</strong>
+                                <strong>Top-Left: Heterotopia (Regulated)</strong>
                                 <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
                                     Low connectedness + High otherness.
-                                    Unconventional but lacking community.
+                                    Progressive space but traditional/regulated pedagogy. Like a prison - operates 
+                                    by different rules but NOT permissive. Unconventional design but hierarchical 
+                                    culture, strict controls.
+                                </p>
+                            </div>
+
+                            <div style={{ padding: '15px', background: '#fef3c7', borderRadius: '8px', border: '2px solid #f59e0b' }}>
+                                <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🤝</div>
+                                <strong>Bottom-Right: Affinity Space (Formal Env)</strong>
+                                <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
+                                    High connectedness + Low otherness.
+                                    Progressive pedagogy but traditional space. Active learning classrooms, collaborative libraries.
                                 </p>
                             </div>
 
                             <div style={{ padding: '15px', background: '#d1fae5', borderRadius: '8px', border: '2px solid #10b981' }}>
                                 <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🎉</div>
-                                <strong>FEAR-less (HAS) ⭐</strong>
+                                <strong>Top-Right: FEAR-less (HAS) ⭐</strong>
                                 <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
                                     High connectedness + High otherness.
-                                    The Foundry, game jams, maker spaces!
+                                    Progressive pedagogy AND space. The Foundry, game jams, maker spaces!
                                 </p>
                             </div>
                         </div>
@@ -816,7 +828,7 @@
                     <div className="button-group" style={{ marginTop: '30px' }}>
                         <button className="btn-secondary" onClick={() => setStep(0)}>← Back</button>
                         <button className="btn-primary" onClick={() => setStep(1)}>
-                            Got It! Let's Assess My Space →
+                            Got It! Assess Your Space & Practice →
                         </button>
                     </div>
                 </div>
@@ -1147,23 +1159,52 @@
             const renderMatrix = () => {
                 const handleMatrixInteraction = (e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-                    const y = Math.max(0, Math.min(100, ((rect.height - (e.clientY - rect.top)) / rect.height) * 100));
+                    let clientX, clientY;
+                    
+                    // Handle both mouse and touch events
+                    if (e.touches && e.touches[0]) {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
+                    } else {
+                        clientX = e.clientX;
+                        clientY = e.clientY;
+                    }
+                    
+                    const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+                    const y = Math.max(0, Math.min(100, ((rect.height - (clientY - rect.top)) / rect.height) * 100));
                     setMatrixPosition({ x, y });
                 };
 
                 const handleMouseDown = (e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                    handleMatrixInteraction(e);
+                };
+
+                const handleTouchStart = (e) => {
                     setIsDragging(true);
                     handleMatrixInteraction(e);
                 };
 
                 const handleMouseMove = (e) => {
                     if (isDragging) {
+                        e.preventDefault();
+                        handleMatrixInteraction(e);
+                    }
+                };
+
+                const handleTouchMove = (e) => {
+                    if (isDragging) {
+                        e.preventDefault();
                         handleMatrixInteraction(e);
                     }
                 };
 
                 const handleMouseUp = () => {
+                    setIsDragging(false);
+                };
+
+                const handleTouchEnd = () => {
                     setIsDragging(false);
                 };
 
@@ -1185,8 +1226,8 @@
                         };
                     } else if (x <= 50 && y > 50) {
                         return {
-                            title: '🎨 Heterotopia',
-                            desc: 'Low connectedness + High otherness. Unconventional space lacking community building. Some connect, others seek alternatives.',
+                            title: '🎨 Heterotopia (Regulated)',
+                            desc: 'Low connectedness + High otherness. Unconventional space BUT still controlled/regulated. Like a prison - different rules but not permissive.',
                             color: '#e0e7ff'
                         };
                     } else {
@@ -1204,7 +1245,7 @@
                     <div>
                         <h2 className="section-title">🗺️ Position on FEARless Matrix</h2>
                         <p className="section-description">
-                            Click anywhere on the matrix to position <strong>{spaceData.name || 'this space'}</strong>. 
+                            Click or tap anywhere on the matrix to position <strong>{spaceData.name || 'this space'}</strong>. 
                             You can also drag the 📍 marker around!
                         </p>
 
@@ -1228,7 +1269,13 @@
                                 onMouseMove={handleMouseMove}
                                 onMouseUp={handleMouseUp}
                                 onMouseLeave={handleMouseUp}
-                                style={{ cursor: isDragging ? 'grabbing' : 'crosshair' }}
+                                onTouchStart={handleTouchStart}
+                                onTouchMove={handleTouchMove}
+                                onTouchEnd={handleTouchEnd}
+                                style={{ 
+                                    cursor: isDragging ? 'grabbing' : 'crosshair',
+                                    touchAction: 'none' // Prevent scrolling while dragging on mobile
+                                }}
                             >
                                 {/* Center cross axes */}
                                 <div className="matrix-axis matrix-axis-x"></div>
@@ -1271,6 +1318,10 @@
                                         cursor: isDragging ? 'grabbing' : 'grab'
                                     }}
                                     onMouseDown={(e) => {
+                                        e.stopPropagation();
+                                        setIsDragging(true);
+                                    }}
+                                    onTouchStart={(e) => {
                                         e.stopPropagation();
                                         setIsDragging(true);
                                     }}
