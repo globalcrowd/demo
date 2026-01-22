@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceStories - Share Your Learning Moments</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #6b7280;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Feed */
+        .feed-container {
+            padding: 15px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .story-header {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .location-time {
+            font-size: 0.8em;
+            color: #6b7280;
+        }
+
+        .story-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background: #f3f4f6;
+        }
+
+        .story-content {
+            padding: 15px;
+        }
+
+        .mood-indicator {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .mood-flow { background: #d1fae5; color: #065f46; }
+        .mood-frustrated { background: #fee2e2; color: #991b1b; }
+        .mood-focused { background: #dbeafe; color: #1e40af; }
+        .mood-social { background: #fef3c7; color: #92400e; }
+
+        .story-text {
+            line-height: 1.6;
+            color: #374151;
+            margin: 10px 0;
+        }
+
+        .ai-insight {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9em;
+        }
+
+        .ai-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            padding: 5px 10px;
+            background: #f3f4f6;
+            border-radius: 15px;
+            font-size: 0.8em;
+            color: #4b5563;
+        }
+
+        .story-actions {
+            display: flex;
+            padding: 10px 15px;
+            border-top: 1px solid #e5e7eb;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            color: #667eea;
+        }
+
+        /* Create Post FAB */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Create Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: flex-end;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 430px;
+            margin: 0 auto;
+            border-radius: 20px 20px 0 0;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUpModal 0.3s ease-out;
+        }
+
+        @keyframes slideUpModal {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f9fafb;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .prompt-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .prompt-card {
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .prompt-card:hover, .prompt-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .prompt-emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Profile */
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: white;
+            margin: -20px 20px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .section-card {
+            background: white;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+
+        .badge.earned {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            padding: 10px 0;
+            z-index: 100;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 1.5em;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .nav-label {
+            font-size: 0.7em;
+        }
+
+        /* Link to assessment tool */
+        .link-banner {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .link-banner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .link-icon {
+            font-size: 2em;
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 3px;
+        }
+
+        .link-desc {
+            font-size: 0.85em;
+            color: #4b5563;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Sample data
+        const sampleStories = [
+            {
+                id: 1,
+                user: 'Sarah M.',
+                avatar: 'SM',
+                location: 'Engineering Maker Space',
+                time: '2 hours ago',
+                image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800',
+                mood: 'flow',
+                text: "Finally found my zone! The combination of background music, natural light, and being able to spread out my prototypes is perfect. This is what learning should feel like.",
+                aiInsight: "AI detected: High energy, collaborative environment, moveable furniture. FEAR Score: 2.1 (FEARless!)",
+                tags: ['#FlowState', '#MakerMode', '#NaturalLight', '#FEARless'],
+                likes: 24,
+                comments: 5,
+                shares: 2
+            },
+            {
+                id: 2,
+                user: 'James K.',
+                avatar: 'JK',
+                location: 'Central Library - 3rd Floor',
+                time: '4 hours ago',
+                image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800',
+                mood: 'frustrated',
+                text: "Can't focus. Too many rules about noise, no food allowed, and I feel like I'm being watched. Just want to grab coffee and work comfortably!",
+                aiInsight: "AI detected: Fixed seating, surveillance cameras, strict signage. FEAR Score: 6.8 (Very High)",
+                tags: ['#TooQuiet', '#Monitored', '#NeedsChange', '#FEAR'],
+                likes: 18,
+                comments: 12,
+                shares: 4
+            },
+            {
+                id: 3,
+                user: 'Alex T.',
+                avatar: 'AT',
+                location: 'Outdoor Courtyard',
+                time: '6 hours ago',
+                image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800',
+                mood: 'social',
+                text: "Study group vibes! We've been collaborating on our project for 3 hours and the fresh air keeps everyone energized. Plus, we can actually talk without being shushed.",
+                aiInsight: "AI detected: Group collaboration, outdoor setting, casual postures. FEAR Score: 1.8 (FEARless!)",
+                tags: ['#GroupWork', '#OutdoorLearning', '#Fresh', '#Collaborative'],
+                likes: 31,
+                comments: 8,
+                shares: 3
+            },
+            {
+                id: 4,
+                user: 'Emma R.',
+                avatar: 'ER',
+                location: 'Learning Café',
+                time: '1 day ago',
+                image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800',
+                mood: 'focused',
+                text: "Coffee, comfy chair, and my laptop. Sometimes simple is best. The ambient noise actually helps me concentrate - not too quiet, not too loud.",
+                aiInsight: "AI detected: Flexible seating, food/drink friendly, moderate noise. FEAR Score: 3.2 (Low-Moderate)",
+                tags: ['#CaféStudy', '#Comfortable', '#Productive', '#Balance'],
+                likes: 42,
+                comments: 6,
+                shares: 5
+            }
+        ];
+
+        const prompts = [
+            { id: 1, emoji: '🎉', text: "What's working?" },
+            { id: 2, emoji: '😤', text: "What's blocking you?" },
+            { id: 3, emoji: '💡', text: "One thing to change?" },
+            { id: 4, emoji: '🤝', text: "Who's with you?" }
+        ];
+
+        const badges = [
+            { id: 1, emoji: '🗺️', name: 'Space Explorer', earned: true, desc: 'Visited 10 spaces' },
+            { id: 2, emoji: '🌊', name: 'Flow Hunter', earned: true, desc: '5 flow state posts' },
+            { id: 3, emoji: '🦉', name: 'Night Owl', earned: false, desc: 'Post after 10pm' },
+            { id: 4, emoji: '🌅', name: 'Early Bird', earned: true, desc: 'Post before 7am' },
+            { id: 5, emoji: '🤝', name: 'Social Learner', earned: false, desc: 'Tag 10 people' },
+            { id: 6, emoji: '💎', name: 'Hidden Gem', earned: false, desc: 'Find secret space' }
+        ];
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('feed');
+            const [showCreateModal, setShowCreateModal] = useState(false);
+            const [selectedPrompt, setSelectedPrompt] = useState(null);
+            const [storyText, setStoryText] = useState('');
+            const [stories, setStories] = useState(sampleStories);
+            const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+            const moodColors = {
+                flow: 'mood-flow',
+                frustrated: 'mood-frustrated',
+                focused: 'mood-focused',
+                social: 'mood-social'
+            };
+
+            const moodEmojis = {
+                flow: '🌊',
+                frustrated: '😤',
+                focused: '🎯',
+                social: '🤝'
+            };
+
+            const handleCreatePost = () => {
+                if (!storyText.trim()) return;
+
+                setIsAnalyzing(true);
+                
+                // Simulate AI analysis
+                setTimeout(() => {
+                    const newStory = {
+                        id: stories.length + 1,
+                        user: 'You',
+                        avatar: 'ME',
+                        location: 'Your Current Space',
+                        time: 'Just now',
+                        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800',
+                        mood: 'flow',
+                        text: storyText,
+                        aiInsight: "AI analysis complete! Detected positive sentiment, collaborative indicators, and low FEAR markers. Keep learning here!",
+                        tags: ['#JustPosted', '#MySpace', '#Learning'],
+                        likes: 0,
+                        comments: 0,
+                        shares: 0
+                    };
+
+                    setStories([newStory, ...stories]);
+                    setShowCreateModal(false);
+                    setStoryText('');
+                    setSelectedPrompt(null);
+                    setIsAnalyzing(false);
+                    setActiveTab('feed');
+                }, 2000);
+            };
+
+            const renderFeed = () => (
+                <div className="feed-container">
+                    <a href="index.html" style={{ textDecoration: 'none' }}>
+                        <div className="link-banner">
+                            <div className="link-icon">📊</div>
+                            <div className="link-content">
+                                <div className="link-title">Want to assess your space?</div>
+                                <div className="link-desc">Take the FEARless Assessment Tool →</div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {stories.map((story, index) => (
+                        <div key={story.id} className="story-card" style={{ animationDelay: `${index * 0.1}s` }}>
+                            <div className="story-header">
+                                <div className="avatar">{story.avatar}</div>
+                                <div className="user-info">
+                                    <div className="username">{story.user}</div>
+                                    <div className="location-time">
+                                        📍 {story.location} • {story.time}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <img src={story.image} alt="Learning space" className="story-image" />
+                            
+                            <div className="story-content">
+                                <span className={`mood-indicator ${moodColors[story.mood]}`}>
+                                    {moodEmojis[story.mood]} {story.mood.charAt(0).toUpperCase() + story.mood.slice(1)}
+                                </span>
+                                
+                                <p className="story-text">{story.text}</p>
+                                
+                                <div className="ai-insight">
+                                    <strong>🤖 AI Insight:</strong> {story.aiInsight}
+                                </div>
+                                
+                                <div className="ai-tags">
+                                    {story.tags.map(tag => (
+                                        <span key={tag} className="tag">{tag}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="story-actions">
+                                <button className="action-btn">
+                                    ❤️ {story.likes}
+                                </button>
+                                <button className="action-btn">
+                                    💬 {story.comments}
+                                </button>
+                                <button className="action-btn">
+                                    🔁 {story.shares}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+
+            const renderProfile = () => (
+                <div>
+                    <div className="profile-header">
+                        <div className="profile-avatar">ME</div>
+                        <h2>Your Learning Journey</h2>
+                        <p style={{ opacity: 0.9, marginTop: 5 }}>Exploring spaces since Oct 2024</p>
+                    </div>
+
+                    <div className="profile-stats">
+                        <div className="stat">
+                            <div className="stat-value">23</div>
+                            <div className="stat-label">Stories</div>
+                        </div>
+                        <div className="stat">
+                            <div className="stat-value">12</div>
+                            <div className="stat-label">Spaces</div>
+                        </div>
+                        <div className="stat">
+                            <div className="stat-value">47</div>
+                            <div className="stat-label">Flow Hours</div>
+                        </div>
+                    </div>
+
+                    <a href="index.html" style={{ textDecoration: 'none' }}>
+                        <div className="link-banner">
+                            <div className="link-icon">📊</div>
+                            <div className="link-content">
+                                <div className="link-title">Get your full assessment</div>
+                                <div className="link-desc">Complete FEARless Assessment Tool →</div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <div className="section-card">
+                        <h3 className="section-title">🏆 Your Badges</h3>
+                        {badges.map(badge => (
+                            <span key={badge.id} className={`badge ${badge.earned ? 'earned' : ''}`}>
+                                <span>{badge.emoji}</span>
+                                <span>{badge.name}</span>
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="section-card">
+                        <h3 className="section-title">🧬 Your Learning Genome</h3>
+                        <p style={{ lineHeight: 1.6, color: '#4b5563' }}>
+                            <strong>Space Affinity:</strong> Maker Spaces {'>'} Cafés {'>'} Libraries<br />
+                            <strong>Social Preference:</strong> 60% collaborative, 40% solitary<br />
+                            <strong>Peak Hours:</strong> 9-11am, 7-9pm<br />
+                            <strong>Flow Triggers:</strong> Natural light, background music<br />
+                            <strong>FEAR Tolerance:</strong> Low (you prefer FEARless spaces!)
+                        </p>
+                    </div>
+                </div>
+            );
+
+            const renderCreateModal = () => (
+                <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2 className="modal-title">Share Your Story</h2>
+                            <button className="close-btn" onClick={() => setShowCreateModal(false)}>×</button>
+                        </div>
+                        
+                        <div className="modal-body">
+                            <div className="upload-area">
+                                <div className="upload-icon">📸</div>
+                                <p>Tap to add photo or video</p>
+                                <small style={{ color: '#6b7280' }}>Capture your learning moment</small>
+                            </div>
+
+                            <h3 style={{ marginBottom: 10 }}>How are you feeling?</h3>
+                            <div className="prompt-selector">
+                                {prompts.map(prompt => (
+                                    <div 
+                                        key={prompt.id}
+                                        className={`prompt-card ${selectedPrompt === prompt.id ? 'selected' : ''}`}
+                                        onClick={() => setSelectedPrompt(prompt.id)}
+                                    >
+                                        <span className="prompt-emoji">{prompt.emoji}</span>
+                                        <div>{prompt.text}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <h3 style={{ margin: '20px 0 10px' }}>Tell your story...</h3>
+                            <textarea 
+                                placeholder="What's your experience in this space? What's working? What's not?"
+                                value={storyText}
+                                onChange={(e) => setStoryText(e.target.value)}
+                            />
+
+                            {isAnalyzing ? (
+                                <div className="loading">
+                                    <div className="spinner"></div>
+                                    <p style={{ marginTop: 15 }}>🤖 AI is analyzing your story...</p>
+                                </div>
+                            ) : (
+                                <button 
+                                    className="btn-primary"
+                                    onClick={handleCreatePost}
+                                    disabled={!storyText.trim()}
+                                >
+                                    Post Story 🚀
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="app-container">
+                    <div className="app-header">
+                        <div className="logo">SpaceStories</div>
+                        <div className="tagline">Share your learning moments 📚✨</div>
+                    </div>
+
+                    <div className="nav-tabs">
+                        <button 
+                            className={`nav-tab ${activeTab === 'feed' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('feed')}
+                        >
+                            Feed
+                        </button>
+                        <button 
+                            className={`nav-tab ${activeTab === 'profile' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('profile')}
+                        >
+                            Profile
+                        </button>
+                    </div>
+
+                    {activeTab === 'feed' && renderFeed()}
+                    {activeTab === 'profile' && renderProfile()}
+
+                    <button className="fab" onClick={() => setShowCreateModal(true)}>
+                        +
+                    </button>
+
+                    {showCreateModal && renderCreateModal()}
+
+                    <div className="bottom-nav">
+                        <button 
+                            className={`nav-item ${activeTab === 'feed' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('feed')}
+                        >
+                            <span className="nav-icon">🏠</span>
+                            <span className="nav-label">Feed</span>
+                        </button>
+                        <button className="nav-item">
+                            <span className="nav-icon">🗺️</span>
+                            <span className="nav-label">Explore</span>
+                        </button>
+                        <button className="nav-item" onClick={() => setShowCreateModal(true)}>
+                            <span className="nav-icon">➕</span>
+                            <span className="nav-label">Post</span>
+                        </button>
+                        <button 
+                            className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('profile')}
+                        >
+                            <span className="nav-icon">👤</span>
+                            <span className="nav-label">Profile</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
