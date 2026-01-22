@@ -508,7 +508,7 @@
             { id: 'FORM1', dimension: 'Formality', axis: 'Otherness', text: 'This space looks and feels like a typical institutional/academic environment (standardized, formal aesthetic).', reverse: false },
             { id: 'FORM2', dimension: 'Formality', axis: 'Otherness', text: 'The design of this space clearly signals "serious academic work only".', reverse: false },
             { id: 'FORM3', dimension: 'Formality', axis: 'Otherness', text: 'This space could be mistaken for a traditional classroom or lecture hall.', reverse: false },
-            { id: 'FORM4', dimension: 'Formality', axis: 'Otherness', text: 'The space aesthetic is warm, comfortable, and unconventional (NOT institutional).', reverse: true },
+            { id: 'FORM4', dimension: 'Formality', axis: 'Otherness', text: 'The space aesthetic is unconventional, creative, and attractive for affinity-based learning (NOT institutional).', reverse: true },
             { id: 'FORM5', dimension: 'Formality', axis: 'Connectedness', text: 'There are clear distinctions between "teacher/staff" and "student" areas in this space.', reverse: false },
             { id: 'FORM6', dimension: 'Formality', axis: 'Connectedness', text: 'The design reinforces traditional hierarchical roles (instructor as authority, students as recipients).', reverse: false },
             { id: 'REG1', dimension: 'Regulation', axis: 'Both', text: 'You need to book or reserve this space in advance to use it.', reverse: false },
@@ -538,7 +538,9 @@
                 name: '',
                 type: '',
                 capacity: '',
-                primaryUse: ''
+                primaryUse: '',
+                description: '',
+                aiAnalyzed: false
             });
             const [fearResponses, setFearResponses] = useState({});
             const [affinityResponses, setAffinityResponses] = useState({});
@@ -547,6 +549,11 @@
 
             const totalSteps = 5;
             const progress = (step / totalSteps) * 100;
+
+            // Auto-scroll to top on step change
+            useEffect(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, [step]);
 
             const randomizeResponses = () => {
                 // Randomize FEAR responses
@@ -815,10 +822,141 @@
                 </div>
             );
 
+            const simulateAIAnalysis = (description) => {
+                // Simulated AI analysis based on keywords
+                const lower = description.toLowerCase();
+                
+                let type = '';
+                let primaryUse = '';
+                let suggestedName = '';
+                
+                // Type detection
+                if (lower.includes('lecture') || lower.includes('theater') || lower.includes('rows')) {
+                    type = 'lecture';
+                } else if (lower.includes('maker') || lower.includes('workshop') || lower.includes('tools') || lower.includes('prototyp')) {
+                    type = 'maker';
+                } else if (lower.includes('lab') || lower.includes('computer')) {
+                    type = 'lab';
+                } else if (lower.includes('library') || lower.includes('study') || lower.includes('quiet')) {
+                    type = 'library';
+                } else if (lower.includes('lounge') || lower.includes('casual') || lower.includes('sofa')) {
+                    type = 'lounge';
+                } else if (lower.includes('studio') || lower.includes('flexible') || lower.includes('moveable')) {
+                    type = 'studio';
+                } else if (lower.includes('outdoor') || lower.includes('garden') || lower.includes('courtyard')) {
+                    type = 'outdoor';
+                } else if (lower.includes('innovation') || lower.includes('collaboration') || lower.includes('creative')) {
+                    type = 'innovation';
+                } else if (lower.includes('cafe') || lower.includes('coffee')) {
+                    type = 'cafe';
+                } else {
+                    type = 'classroom';
+                }
+                
+                // Primary use detection
+                if (lower.includes('teach') || lower.includes('class') || lower.includes('lecture')) {
+                    primaryUse = 'instruction';
+                } else if (lower.includes('study') || lower.includes('individual')) {
+                    primaryUse = 'study';
+                } else if (lower.includes('collab') || lower.includes('team') || lower.includes('group')) {
+                    primaryUse = 'collaboration';
+                } else if (lower.includes('mak') || lower.includes('build') || lower.includes('prototype')) {
+                    primaryUse = 'making';
+                } else if (lower.includes('social') || lower.includes('hang out') || lower.includes('meet')) {
+                    primaryUse = 'social';
+                } else {
+                    primaryUse = 'multiple';
+                }
+                
+                // Generate suggested name
+                const typeNames = {
+                    'lecture': 'Lecture Hall',
+                    'maker': 'Maker Space',
+                    'lab': 'Laboratory',
+                    'library': 'Study Space',
+                    'lounge': 'Student Lounge',
+                    'studio': 'Learning Studio',
+                    'outdoor': 'Outdoor Learning Area',
+                    'innovation': 'Innovation Hub',
+                    'cafe': 'Learning Café',
+                    'classroom': 'Classroom'
+                };
+                suggestedName = typeNames[type] || 'Learning Space';
+                
+                return { type, primaryUse, suggestedName };
+            };
+
+            const handleAIAnalyze = () => {
+                if (!spaceData.description || spaceData.description.trim().length < 10) {
+                    alert('Please provide a more detailed description (at least 10 characters) for AI analysis.');
+                    return;
+                }
+                
+                const analysis = simulateAIAnalysis(spaceData.description);
+                setSpaceData({
+                    ...spaceData,
+                    type: analysis.type,
+                    primaryUse: analysis.primaryUse,
+                    name: spaceData.name || analysis.suggestedName,
+                    aiAnalyzed: true
+                });
+            };
+
             const renderSpaceInfo = () => (
-                <div>
-                    <h2 className="section-title">Tell Us About Your Space</h2>
+                <div className="animate-in">
+                    <h2 className="section-title">📍 Tell Us About Your Space</h2>
                     <p className="section-description">Basic information to help contextualize your assessment.</p>
+                    
+                    <div className="results-card" style={{ background: 'linear-gradient(135deg, #ddd6fe 0%, #e9d5ff 100%)', border: '2px solid #a78bfa', marginBottom: '25px' }}>
+                        <h3>🤖 AI-Powered Space Analysis (Beta)</h3>
+                        <p style={{ lineHeight: '1.6', marginBottom: '10px' }}>
+                            Describe your space and let AI suggest the type and primary use!
+                        </p>
+                        
+                        <div className="form-group">
+                            <label>Describe Your Space</label>
+                            <textarea
+                                placeholder="e.g., A flexible space with moveable furniture, whiteboards on walls, and comfortable seating areas. Students often collaborate here on projects..."
+                                value={spaceData.description}
+                                onChange={(e) => setSpaceData({...spaceData, description: e.target.value, aiAnalyzed: false})}
+                                style={{ 
+                                    width: '100%', 
+                                    minHeight: '100px', 
+                                    padding: '12px', 
+                                    border: '2px solid #e5e7eb', 
+                                    borderRadius: '8px',
+                                    fontSize: '1em',
+                                    fontFamily: 'inherit',
+                                    resize: 'vertical'
+                                }}
+                            />
+                        </div>
+                        
+                        <button 
+                            className="btn-primary" 
+                            onClick={handleAIAnalyze}
+                            style={{ width: '100%', marginTop: '10px' }}
+                        >
+                            🤖 Analyze with AI
+                        </button>
+                        
+                        {spaceData.aiAnalyzed && (
+                            <div style={{ 
+                                marginTop: '15px', 
+                                padding: '15px', 
+                                background: 'white', 
+                                borderRadius: '8px',
+                                border: '2px solid #10b981'
+                            }}>
+                                <div style={{ color: '#10b981', fontWeight: 'bold', marginBottom: '10px' }}>
+                                    ✓ AI Analysis Complete!
+                                </div>
+                                <div style={{ fontSize: '0.9em', color: '#6b7280' }}>
+                                    The fields below have been auto-filled. You can adjust them if needed.
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     
                     <div className="form-group">
                         <label>Space Name *</label>
@@ -838,15 +976,20 @@
                             required
                         >
                             <option value="">Select a type...</option>
-                            <option value="lecture">Traditional lecture hall</option>
-                            <option value="classroom">Classroom with moveable furniture</option>
-                            <option value="seminar">Seminar room</option>
-                            <option value="studio">Flexible learning studio</option>
-                            <option value="lab">Laboratory or workshop</option>
-                            <option value="library">Library or study space</option>
-                            <option value="maker">Maker space or innovation lab</option>
-                            <option value="lounge">Student lounge</option>
-                            <option value="outdoor">Outdoor/informal area</option>
+                            <option value="lecture">Traditional lecture hall (fixed seating, rows)</option>
+                            <option value="classroom">Standard classroom with moveable furniture</option>
+                            <option value="seminar">Seminar room (table arrangement)</option>
+                            <option value="studio">Flexible learning studio (zones, reconfigurable)</option>
+                            <option value="lab">Laboratory or technical workshop</option>
+                            <option value="library">Library or study commons</option>
+                            <option value="maker">Maker space or fabrication lab</option>
+                            <option value="innovation">Innovation hub or entrepreneurship center</option>
+                            <option value="lounge">Student lounge or social space</option>
+                            <option value="cafe">Learning café or informal study area</option>
+                            <option value="outdoor">Outdoor learning space</option>
+                            <option value="virtual">Virtual/online learning environment</option>
+                            <option value="hybrid">Hybrid space (physical + virtual)</option>
+                            <option value="other">Other (specify in description)</option>
                         </select>
                     </div>
 
@@ -869,23 +1012,24 @@
                             required
                         >
                             <option value="">Select primary use...</option>
-                            <option value="instruction">Scheduled instruction</option>
+                            <option value="instruction">Scheduled instruction (lectures, classes)</option>
                             <option value="study">Independent study</option>
-                            <option value="collaboration">Group work/collaboration</option>
-                            <option value="making">Making/prototyping</option>
-                            <option value="social">Social gathering</option>
-                            <option value="multiple">Multiple purposes</option>
+                            <option value="collaboration">Group work / collaboration</option>
+                            <option value="making">Making / prototyping / hands-on work</option>
+                            <option value="social">Social gathering / community building</option>
+                            <option value="events">Events / workshops / seminars</option>
+                            <option value="multiple">Multiple purposes (flexible use)</option>
                         </select>
                     </div>
 
                     <div className="button-group">
-                        <button className="btn-secondary" onClick={() => setStep(0)}>Back</button>
+                        <button className="btn-secondary" onClick={() => setStep(0.5)}>← Back</button>
                         <button 
                             className="btn-primary" 
                             onClick={() => setStep(2)}
                             disabled={!spaceData.name || !spaceData.type || !spaceData.primaryUse}
                         >
-                            Next: FEAR Assessment
+                            Next: FEAR Assessment 📋
                         </button>
                     </div>
                 </div>
@@ -1023,13 +1167,59 @@
                     setIsDragging(false);
                 };
 
+                const getQuadrantExplainer = () => {
+                    const x = matrixPosition.x;
+                    const y = matrixPosition.y;
+                    
+                    if (x > 50 && y > 50) {
+                        return {
+                            title: '🎉 FEAR-less (HAS)',
+                            desc: 'High connectedness + High otherness = Optimal! Strong community, unconventional design. Examples: Foundry, game jams.',
+                            color: '#d1fae5'
+                        };
+                    } else if (x > 50 && y <= 50) {
+                        return {
+                            title: '🤝 Affinity Space',
+                            desc: 'High connectedness + Low otherness. Good collaboration but traditional design constrains. Example: Active learning classrooms.',
+                            color: '#fef3c7'
+                        };
+                    } else if (x <= 50 && y > 50) {
+                        return {
+                            title: '🎨 Heterotopia',
+                            desc: 'Low connectedness + High otherness. Unconventional space lacking community building. Some connect, others seek alternatives.',
+                            color: '#e0e7ff'
+                        };
+                    } else {
+                        return {
+                            title: '😰 FEAR-full',
+                            desc: 'Low connectedness + Low otherness. Traditional constraints limit both social connection and innovation. Most lecture halls.',
+                            color: '#fee2e2'
+                        };
+                    }
+                };
+
+                const explainer = getQuadrantExplainer();
+
                 return (
                     <div>
                         <h2 className="section-title">🗺️ Position on FEARless Matrix</h2>
                         <p className="section-description">
                             Click anywhere on the matrix to position <strong>{spaceData.name || 'this space'}</strong>. 
-                            You can also drag the marker around!
+                            You can also drag the 📍 marker around!
                         </p>
+
+                        {/* Live explainer */}
+                        <div style={{ 
+                            padding: '15px', 
+                            background: explainer.color, 
+                            borderRadius: '8px', 
+                            marginBottom: '20px',
+                            border: '2px solid rgba(0,0,0,0.1)',
+                            transition: 'all 0.3s ease'
+                        }}>
+                            <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1em' }}>{explainer.title}</h4>
+                            <p style={{ margin: 0, lineHeight: '1.6', fontSize: '0.95em' }}>{explainer.desc}</p>
+                        </div>
 
                         <div className="matrix-container">
                             <div 
@@ -1052,10 +1242,10 @@
                                     🤝 High Connectedness
                                 </div>
                                 <div className="matrix-label matrix-label-y-bottom">
-                                    😰 Low Otherness (High FEAR)
+                                    😰 Low Otherness<br/><small>(High FEAR)</small>
                                 </div>
                                 <div className="matrix-label matrix-label-y-top">
-                                    ✨ High Otherness (Low FEAR)
+                                    ✨ High Otherness<br/><small>(Low FEAR)</small>
                                 </div>
 
                                 {/* Quadrant labels */}
@@ -1084,6 +1274,7 @@
                                         e.stopPropagation();
                                         setIsDragging(true);
                                     }}
+                                    title="Drag to reposition"
                                 >
                                     📍
                                 </div>
@@ -1212,6 +1403,127 @@
                                 {matrixPosition.x <= 50 && matrixPosition.y <= 50 && 
                                     '⚠️ Your space is FEAR-full (Traditional Learning) - low connectedness and low otherness. High formality and regulation limit both social connection and spatial innovation. Most lecture halls and strict classrooms fall here.'}
                             </p>
+                        </div>
+
+                        <div className="results-card">
+                            <h3>🎯 Perception vs. Reality: How You See Your Space</h3>
+                            <p style={{ lineHeight: '1.6', marginBottom: '15px' }}>
+                                Let's compare where <strong>you positioned</strong> your space vs. what your <strong>assessment responses</strong> suggest:
+                            </p>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
+                                <div style={{ padding: '15px', background: '#f0f9ff', borderRadius: '8px', border: '2px solid #3b82f6' }}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#1e40af' }}>
+                                        📍 Your Positioning
+                                    </div>
+                                    <div style={{ fontSize: '0.9em', color: '#4b5563' }}>
+                                        Connectedness: <strong>{matrixPosition.x.toFixed(0)}%</strong><br/>
+                                        Otherness: <strong>{matrixPosition.y.toFixed(0)}%</strong>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ padding: '15px', background: '#fef3c7', borderRadius: '8px', border: '2px solid #f59e0b' }}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#92400e' }}>
+                                        📊 Calculated from Responses
+                                    </div>
+                                    <div style={{ fontSize: '0.9em', color: '#4b5563' }}>
+                                        Connectedness: <strong>{((scores.socialConnectedness / 7) * 100).toFixed(0)}%</strong><br/>
+                                        Otherness: <strong>{((scores.spatialOtherness / 7) * 100).toFixed(0)}%</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {(() => {
+                                const userX = matrixPosition.x;
+                                const userY = matrixPosition.y;
+                                const calcX = (scores.socialConnectedness / 7) * 100;
+                                const calcY = (scores.spatialOtherness / 7) * 100;
+                                const gapX = Math.abs(userX - calcX);
+                                const gapY = Math.abs(userY - calcY);
+                                
+                                let insight = '';
+                                if (gapX > 20 || gapY > 20) {
+                                    insight = '⚠️ <strong>Significant perception gap detected!</strong> ';
+                                    
+                                    if (userX > calcX + 20) {
+                                        insight += 'You see your space as <strong>more connected</strong> than your responses suggest. ';
+                                    } else if (userX < calcX - 20) {
+                                        insight += 'Your responses indicate <strong>more connectedness</strong> than you initially perceived. ';
+                                    }
+                                    
+                                    if (userY > calcY + 20) {
+                                        insight += 'You perceive <strong>higher otherness</strong> (lower FEAR) than the assessment shows. This suggests the space may have more subtle constraints than you initially noticed.';
+                                    } else if (userY < calcY - 20) {
+                                        insight += 'The space has <strong>more otherness</strong> (less FEAR) than you first thought! Your responses reveal hidden FEARless characteristics.';
+                                    }
+                                } else {
+                                    insight = '✓ <strong>Good alignment!</strong> Your intuitive positioning closely matches your detailed assessment responses. You have a clear understanding of your space\'s characteristics.';
+                                }
+                                
+                                return (
+                                    <div style={{ 
+                                        padding: '15px', 
+                                        background: (gapX > 20 || gapY > 20) ? '#fef3c7' : '#d1fae5', 
+                                        borderRadius: '8px',
+                                        lineHeight: '1.7'
+                                    }}>
+                                        <div dangerouslySetInnerHTML={{ __html: insight }} />
+                                    </div>
+                                );
+                            })()}
+                        </div>
+
+                        <div className="results-card" style={{ background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', border: '2px solid #3b82f6' }}>
+                            <h3>💭 Key Challenges & Opportunities</h3>
+                            <p style={{ lineHeight: '1.6', marginBottom: '15px' }}>
+                                Based on your scores, here are the key challenges and opportunities:
+                            </p>
+                            
+                            <div style={{ marginBottom: '20px' }}>
+                                <h4 style={{ color: '#1f2937', marginBottom: '10px', fontSize: '1.05em' }}>
+                                    {scores.socialConnectedness < 4 ? '🤝 Social Connectedness Challenges:' : '🎉 Social Connectedness Strengths:'}
+                                </h4>
+                                <ul style={{ marginLeft: '20px', lineHeight: '1.7' }}>
+                                    {scores.socialConnectedness < 4 ? (
+                                        <>
+                                            <li>Limited opportunities for spontaneous collaboration</li>
+                                            <li>Hierarchical roles may discourage peer-to-peer knowledge sharing</li>
+                                            <li>Lack of visible affinity space characteristics</li>
+                                            <li><strong>Opportunity:</strong> Introduce flexible furniture, create zones for different interaction types</li>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <li>Strong community and collaboration culture</li>
+                                            <li>Distributed expertise and fluid roles present</li>
+                                            <li>Multiple participation routes available</li>
+                                            <li><strong>Opportunity:</strong> Maintain and document what works for others to learn from</li>
+                                        </>
+                                    )}
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 style={{ color: '#1f2937', marginBottom: '10px', fontSize: '1.05em' }}>
+                                    {scores.spatialOtherness < 4 ? '✨ Spatial Otherness Challenges:' : '🌟 Spatial Otherness Strengths:'}
+                                </h4>
+                                <ul style={{ marginLeft: '20px', lineHeight: '1.7' }}>
+                                    {scores.spatialOtherness < 4 ? (
+                                        <>
+                                            <li>High FEAR (formality + regulation) constraining the space</li>
+                                            <li>Institutional aesthetic and strict usage rules</li>
+                                            <li>Limited creative freedom and experimentation</li>
+                                            <li><strong>Opportunity:</strong> Reduce booking requirements, relax usage rules, change aesthetic</li>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <li>Low FEAR - unconventional and liberating design</li>
+                                            <li>Creative freedom and flexible usage patterns</li>
+                                            <li>Breaks from traditional institutional norms</li>
+                                            <li><strong>Opportunity:</strong> Protect these characteristics from "FEAR creep"</li>
+                                        </>
+                                    )}
+                                </ul>
+                            </div>
                         </div>
 
                         <div className="results-card">
