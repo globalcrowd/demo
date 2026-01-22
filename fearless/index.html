@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FEARless Assessment Tool - Prototype</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .section-description {
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .slider-container {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .slider-question {
+            font-size: 1.05em;
+            color: #1f2937;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #10b981 100%);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #6b7280;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .matrix-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .matrix-canvas {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            position: relative;
+            background: linear-gradient(to right, rgba(239,68,68,0.05) 0%, rgba(16,185,129,0.05) 100%),
+                        linear-gradient(to top, rgba(59,130,246,0.05) 0%, rgba(251,191,36,0.05) 100%);
+        }
+
+        .matrix-axis {
+            position: absolute;
+            background: #9ca3af;
+        }
+
+        .matrix-axis-x {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .matrix-axis-y {
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+        }
+
+        .matrix-label {
+            position: absolute;
+            font-size: 0.9em;
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .matrix-label-x-left {
+            bottom: -30px;
+            left: 10px;
+        }
+
+        .matrix-label-x-right {
+            bottom: -30px;
+            right: 10px;
+        }
+
+        .matrix-label-y-bottom {
+            top: calc(100% - 20px);
+            left: -120px;
+            transform: rotate(-90deg);
+            transform-origin: right center;
+        }
+
+        .matrix-label-y-top {
+            bottom: calc(100% - 20px);
+            left: -120px;
+            transform: rotate(-90deg);
+            transform-origin: right center;
+        }
+
+        .matrix-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: 4px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: move;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+            transition: transform 0.2s;
+        }
+
+        .matrix-marker:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .quadrant-label {
+            position: absolute;
+            font-size: 0.75em;
+            color: #9ca3af;
+            font-style: italic;
+            padding: 8px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 14px 32px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59,130,246,0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-randomize {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249,115,22,0.3);
+        }
+
+        .btn-randomize:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(249,115,22,0.4);
+        }
+
+        .results-card {
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .results-card h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .score-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .score-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .score-label {
+            color: #6b7280;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-interpretation {
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .fear-score-low { color: #10b981; }
+        .fear-score-medium { color: #f59e0b; }
+        .fear-score-high { color: #ef4444; }
+
+        .affinity-score-low { color: #ef4444; }
+        .affinity-score-medium { color: #f59e0b; }
+        .affinity-score-high { color: #10b981; }
+
+        .radar-chart-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .recommendations {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .recommendations h4 {
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .recommendations li:last-child {
+            border-bottom: none;
+        }
+
+        .recommendations li:before {
+            content: "→";
+            color: #3b82f6;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .score-display {
+                flex-direction: column;
+            }
+
+            .score-card {
+                margin: 10px 0;
+            }
+
+            .matrix-canvas {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // FEAR Scale Items (shortened version)
+        const fearItems = [
+            { id: 'FORM1', dimension: 'Formality', text: 'The furniture in this space is fixed and cannot be rearranged.', reverse: false },
+            { id: 'FORM2', dimension: 'Formality', text: 'This space has a clearly defined "front" where instructors/presenters are expected to be.', reverse: false },
+            { id: 'FORM3', dimension: 'Formality', text: 'The design reinforces traditional roles (instructor as authority, students as recipients).', reverse: false },
+            { id: 'FORM4', dimension: 'Formality', text: 'This space feels like it "belongs" to the institution rather than its users.', reverse: false },
+            { id: 'FORM5', dimension: 'Formality', text: 'The aesthetic feels institutional and standardized (not comfortable/inviting).', reverse: false },
+            { id: 'FORM6', dimension: 'Formality', text: 'Anyone can take on teaching or leading roles here, regardless of status.', reverse: true },
+            { id: 'REG1', dimension: 'Regulation', text: 'You need to book or reserve this space in advance to use it.', reverse: false },
+            { id: 'REG2', dimension: 'Regulation', text: 'Access to this space is restricted (limited to certain people or times).', reverse: false },
+            { id: 'REG3', dimension: 'Regulation', text: 'There are strict rules about how this space can be used (e.g., no food, no moving furniture).', reverse: false },
+            { id: 'REG4', dimension: 'Regulation', text: 'This space feels monitored or supervised.', reverse: false },
+            { id: 'REG5', dimension: 'Regulation', text: 'Users have freedom to use this space in creative or unexpected ways.', reverse: true },
+            { id: 'REG6', dimension: 'Regulation', text: 'If you use this space "wrong" (not as intended), you might be corrected.', reverse: false },
+        ];
+
+        // Affinity Items
+        const affinityItems = [
+            { id: 'AFF1', text: 'People with different levels of expertise (novices and experts) use this space together.' },
+            { id: 'AFF2', text: 'Leadership and teaching roles shift depending on who knows what, not fixed hierarchies.' },
+            { id: 'AFF3', text: 'People can participate in different ways (observing, making, teaching, helping) and all are valued.' },
+            { id: 'AFF4', text: 'This space brings together people from different backgrounds, disciplines, or years.' },
+            { id: 'AFF5', text: 'What you know and can contribute matters more than your formal credentials or status.' },
+            { id: 'AFF6', text: 'Unplanned interactions and serendipitous learning happen frequently here.' },
+        ];
+
+        function FearlessApp() {
+            const [step, setStep] = useState(0); // 0: intro, 1: space info, 2: FEAR, 3: Affinity, 4: Matrix, 5: Results
+            const [spaceData, setSpaceData] = useState({
+                name: '',
+                type: '',
+                capacity: '',
+                primaryUse: ''
+            });
+            const [fearResponses, setFearResponses] = useState({});
+            const [affinityResponses, setAffinityResponses] = useState({});
+            const [matrixPosition, setMatrixPosition] = useState({ x: 50, y: 50 });
+
+            const totalSteps = 5;
+            const progress = (step / totalSteps) * 100;
+
+            const randomizeResponses = () => {
+                // Randomize FEAR responses
+                const randomFear = {};
+                fearItems.forEach(item => {
+                    randomFear[item.id] = Math.floor(Math.random() * 7) + 1;
+                });
+                setFearResponses(randomFear);
+
+                // Randomize Affinity responses
+                const randomAffinity = {};
+                affinityItems.forEach(item => {
+                    randomAffinity[item.id] = Math.floor(Math.random() * 7) + 1;
+                });
+                setAffinityResponses(randomAffinity);
+
+                // Randomize matrix position
+                setMatrixPosition({
+                    x: Math.floor(Math.random() * 80) + 10,
+                    y: Math.floor(Math.random() * 80) + 10
+                });
+            };
+
+            const calculateScores = () => {
+                // Calculate FEAR score
+                let formalitySum = 0, regulationSum = 0;
+                let formalityCount = 0, regulationCount = 0;
+
+                Object.entries(fearResponses).forEach(([key, value]) => {
+                    const item = fearItems.find(i => i.id === key);
+                    const score = item.reverse ? (8 - value) : value;
+
+                    if (item.dimension === 'Formality') {
+                        formalitySum += score;
+                        formalityCount++;
+                    } else {
+                        regulationSum += score;
+                        regulationCount++;
+                    }
+                });
+
+                const formality = formalityCount > 0 ? formalitySum / formalityCount : 0;
+                const regulation = regulationCount > 0 ? regulationSum / regulationCount : 0;
+                const fearTotal = (formality + regulation) / 2;
+
+                // Calculate Affinity score
+                const affinitySum = Object.values(affinityResponses).reduce((sum, val) => sum + val, 0);
+                const affinityScore = affinitySum / affinityItems.length;
+
+                return { formality, regulation, fearTotal, affinityScore };
+            };
+
+            const getFearInterpretation = (score) => {
+                if (score <= 2.5) return { text: 'Very Low (FEARless)', class: 'fear-score-low' };
+                if (score <= 4.0) return { text: 'Low-Moderate', class: 'fear-score-medium' };
+                if (score <= 5.5) return { text: 'Moderate-High', class: 'fear-score-high' };
+                return { text: 'Very High', class: 'fear-score-high' };
+            };
+
+            const getAffinityInterpretation = (score) => {
+                if (score <= 3.0) return { text: 'Low', class: 'affinity-score-low' };
+                if (score <= 5.0) return { text: 'Moderate', class: 'affinity-score-medium' };
+                return { text: 'High', class: 'affinity-score-high' };
+            };
+
+            const getRecommendations = (scores) => {
+                const recommendations = [];
+                
+                if (scores.regulation > 4.5) {
+                    recommendations.push('Reduce access barriers: Consider drop-in hours instead of strict booking requirements');
+                }
+                if (scores.regulation > 4.0) {
+                    recommendations.push('Relax usage rules: Allow food/drink, permit diverse uses beyond the prescribed purpose');
+                }
+                if (scores.formality > 4.5) {
+                    recommendations.push('Add flexible furniture: Replace fixed seating with moveable options');
+                }
+                if (scores.formality > 4.0) {
+                    recommendations.push('Warm up the aesthetic: Add plants, comfortable seating, user-contributed decor');
+                }
+                if (scores.affinityScore < 4.0) {
+                    recommendations.push('Encourage cross-disciplinary use: Promote the space to diverse groups');
+                }
+                if (scores.affinityScore < 3.5) {
+                    recommendations.push('Create opportunities for serendipitous encounters: Design zones for lingering');
+                }
+
+                return recommendations.length > 0 ? recommendations : [
+                    'Your space is already quite FEARless! Continue maintaining these positive characteristics.'
+                ];
+            };
+
+            const renderIntro = () => (
+                <div>
+                    <h2 className="section-title">Welcome to the FEARless Assessment Tool</h2>
+                    <p className="section-description">
+                        Assess your learning space in just 10-15 minutes. Discover how <strong>Formal Environments 
+                        and Academic Regulation (FEAR)</strong> might be constraining affinity-based learning.
+                    </p>
+                    <div className="results-card">
+                        <h3>What You'll Get:</h3>
+                        <ul style={{ listStyle: 'none', padding: '20px' }}>
+                            <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                ✓ FEAR Score (Formality + Regulation)
+                            </li>
+                            <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                ✓ Affinity Space Characteristics Rating
+                            </li>
+                            <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                ✓ Position on FEARless Matrix
+                            </li>
+                            <li style={{ padding: '10px 0' }}>
+                                ✓ Actionable Recommendations
+                            </li>
+                        </ul>
+                    </div>
+                    <div className="button-group">
+                        <button className="btn-primary" onClick={() => setStep(1)}>
+                            Start Assessment
+                        </button>
+                        <button className="btn-randomize" onClick={() => {
+                            randomizeResponses();
+                            setStep(5);
+                        }}>
+                            🎲 See Random Example
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderSpaceInfo = () => (
+                <div>
+                    <h2 className="section-title">Tell Us About Your Space</h2>
+                    <p className="section-description">Basic information to help contextualize your assessment.</p>
+                    
+                    <div className="form-group">
+                        <label>Space Name *</label>
+                        <input
+                            type="text"
+                            placeholder="e.g., Engineering Building Room 204"
+                            value={spaceData.name}
+                            onChange={(e) => setSpaceData({...spaceData, name: e.target.value})}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Space Type *</label>
+                        <select
+                            value={spaceData.type}
+                            onChange={(e) => setSpaceData({...spaceData, type: e.target.value})}
+                        >
+                            <option value="">Select a type...</option>
+                            <option value="lecture">Traditional lecture hall</option>
+                            <option value="classroom">Classroom with moveable furniture</option>
+                            <option value="seminar">Seminar room</option>
+                            <option value="studio">Flexible learning studio</option>
+                            <option value="lab">Laboratory or workshop</option>
+                            <option value="library">Library or study space</option>
+                            <option value="maker">Maker space or innovation lab</option>
+                            <option value="lounge">Student lounge</option>
+                            <option value="outdoor">Outdoor/informal area</option>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label>Estimated Capacity</label>
+                        <input
+                            type="number"
+                            placeholder="Number of people"
+                            value={spaceData.capacity}
+                            onChange={(e) => setSpaceData({...spaceData, capacity: e.target.value})}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Primary Use *</label>
+                        <select
+                            value={spaceData.primaryUse}
+                            onChange={(e) => setSpaceData({...spaceData, primaryUse: e.target.value})}
+                        >
+                            <option value="">Select primary use...</option>
+                            <option value="instruction">Scheduled instruction</option>
+                            <option value="study">Independent study</option>
+                            <option value="collaboration">Group work/collaboration</option>
+                            <option value="making">Making/prototyping</option>
+                            <option value="social">Social gathering</option>
+                            <option value="multiple">Multiple purposes</option>
+                        </select>
+                    </div>
+
+                    <div className="button-group">
+                        <button className="btn-secondary" onClick={() => setStep(0)}>Back</button>
+                        <button 
+                            className="btn-primary" 
+                            onClick={() => setStep(2)}
+                            disabled={!spaceData.name || !spaceData.type || !spaceData.primaryUse}
+                        >
+                            Next: FEAR Assessment
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderFearScale = () => (
+                <div>
+                    <h2 className="section-title">FEAR Scale Assessment</h2>
+                    <p className="section-description">
+                        Rate how much you agree with each statement about <strong>{spaceData.name || 'this space'}</strong>.
+                    </p>
+
+                    {fearItems.map((item, index) => (
+                        <div key={item.id} className="slider-container">
+                            <div className="slider-question">
+                                <strong>Question {index + 1} of {fearItems.length}</strong> ({item.dimension})
+                                <br />
+                                {item.text}
+                            </div>
+                            <div className="slider-wrapper">
+                                <input
+                                    type="range"
+                                    min="1"
+                                    max="7"
+                                    value={fearResponses[item.id] || 4}
+                                    onChange={(e) => setFearResponses({
+                                        ...fearResponses,
+                                        [item.id]: parseInt(e.target.value)
+                                    })}
+                                />
+                                <div className="slider-labels">
+                                    <span>1 - Strongly Disagree</span>
+                                    <span>4 - Neutral</span>
+                                    <span>7 - Strongly Agree</span>
+                                </div>
+                                <div className="slider-value">
+                                    {fearResponses[item.id] || 4}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="button-group">
+                        <button className="btn-secondary" onClick={() => setStep(1)}>Back</button>
+                        <button className="btn-randomize" onClick={() => {
+                            const random = {};
+                            fearItems.forEach(item => random[item.id] = Math.floor(Math.random() * 7) + 1);
+                            setFearResponses(random);
+                        }}>
+                            🎲 Randomize All
+                        </button>
+                        <button className="btn-primary" onClick={() => setStep(3)}>
+                            Next: Affinity Assessment
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderAffinityScale = () => (
+                <div>
+                    <h2 className="section-title">Affinity Characteristics</h2>
+                    <p className="section-description">
+                        To what extent does <strong>{spaceData.name || 'this space'}</strong> exhibit these characteristics?
+                    </p>
+
+                    {affinityItems.map((item, index) => (
+                        <div key={item.id} className="slider-container">
+                            <div className="slider-question">
+                                <strong>Question {index + 1} of {affinityItems.length}</strong>
+                                <br />
+                                {item.text}
+                            </div>
+                            <div className="slider-wrapper">
+                                <input
+                                    type="range"
+                                    min="1"
+                                    max="7"
+                                    value={affinityResponses[item.id] || 4}
+                                    onChange={(e) => setAffinityResponses({
+                                        ...affinityResponses,
+                                        [item.id]: parseInt(e.target.value)
+                                    })}
+                                />
+                                <div className="slider-labels">
+                                    <span>1 - Not at all</span>
+                                    <span>4 - Moderately</span>
+                                    <span>7 - Very much</span>
+                                </div>
+                                <div className="slider-value">
+                                    {affinityResponses[item.id] || 4}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="button-group">
+                        <button className="btn-secondary" onClick={() => setStep(2)}>Back</button>
+                        <button className="btn-randomize" onClick={() => {
+                            const random = {};
+                            affinityItems.forEach(item => random[item.id] = Math.floor(Math.random() * 7) + 1);
+                            setAffinityResponses(random);
+                        }}>
+                            🎲 Randomize All
+                        </button>
+                        <button className="btn-primary" onClick={() => setStep(4)}>
+                            Next: Position on Matrix
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderMatrix = () => {
+                const handleMatrixClick = (e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((rect.height - (e.clientY - rect.top)) / rect.height) * 100; // Invert Y
+                    setMatrixPosition({ x, y });
+                };
+
+                return (
+                    <div>
+                        <h2 className="section-title">Position on FEARless Matrix</h2>
+                        <p className="section-description">
+                            Click anywhere on the matrix to position <strong>{spaceData.name || 'this space'}</strong>.
+                        </p>
+
+                        <div className="matrix-container">
+                            <div className="matrix-canvas" onClick={handleMatrixClick}>
+                                {/* Axes */}
+                                <div className="matrix-axis matrix-axis-x"></div>
+                                <div className="matrix-axis matrix-axis-y"></div>
+
+                                {/* Labels */}
+                                <div className="matrix-label matrix-label-x-left">FORMAL</div>
+                                <div className="matrix-label matrix-label-x-right">INFORMAL</div>
+                                <div className="matrix-label matrix-label-y-bottom">ACADEMIC / INSTITUTIONAL</div>
+                                <div className="matrix-label matrix-label-y-top">LOCAL / ALTRUISTIC</div>
+
+                                {/* Quadrant labels */}
+                                <div className="quadrant-label" style={{ left: '10px', bottom: '10px' }}>
+                                    Traditional
+                                </div>
+                                <div className="quadrant-label" style={{ right: '10px', bottom: '10px' }}>
+                                    Progressive
+                                </div>
+                                <div className="quadrant-label" style={{ left: '10px', top: '10px' }}>
+                                    Structured Community
+                                </div>
+                                <div className="quadrant-label" style={{ right: '10px', top: '10px' }}>
+                                    Heterotopic Affinity Space ⭐
+                                </div>
+
+                                {/* Marker */}
+                                <div
+                                    className="matrix-marker"
+                                    style={{
+                                        left: `${matrixPosition.x}%`,
+                                        bottom: `${matrixPosition.y}%`
+                                    }}
+                                    title="Drag or click to reposition"
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{ textAlign: 'center', marginTop: '20px', color: '#6b7280' }}>
+                            Current Position: ({matrixPosition.x.toFixed(0)}% Informal, {matrixPosition.y.toFixed(0)}% Local)
+                        </div>
+
+                        <div className="button-group">
+                            <button className="btn-secondary" onClick={() => setStep(3)}>Back</button>
+                            <button className="btn-randomize" onClick={() => {
+                                setMatrixPosition({
+                                    x: Math.floor(Math.random() * 80) + 10,
+                                    y: Math.floor(Math.random() * 80) + 10
+                                });
+                            }}>
+                                🎲 Random Position
+                            </button>
+                            <button className="btn-primary" onClick={() => setStep(5)}>
+                                See Results
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderResults = () => {
+                const scores = calculateScores();
+                const fearInterp = getFearInterpretation(scores.fearTotal);
+                const affinityInterp = getAffinityInterpretation(scores.affinityScore);
+                const recommendations = getRecommendations(scores);
+
+                return (
+                    <div>
+                        <h2 className="section-title">Your Results</h2>
+                        <p className="section-description">
+                            Assessment for <strong>{spaceData.name || 'Your Space'}</strong>
+                        </p>
+
+                        <div className="score-display">
+                            <div className="score-card">
+                                <div className="score-label">FEAR Score</div>
+                                <div className={`score-value ${fearInterp.class}`}>
+                                    {scores.fearTotal.toFixed(2)}
+                                </div>
+                                <div className={`score-interpretation ${fearInterp.class}`}>
+                                    {fearInterp.text}
+                                </div>
+                                <div style={{ fontSize: '0.85em', color: '#9ca3af', marginTop: '10px' }}>
+                                    Formality: {scores.formality.toFixed(2)}<br />
+                                    Regulation: {scores.regulation.toFixed(2)}
+                                </div>
+                            </div>
+
+                            <div className="score-card">
+                                <div className="score-label">Affinity Score</div>
+                                <div className={`score-value ${affinityInterp.class}`}>
+                                    {scores.affinityScore.toFixed(2)}
+                                </div>
+                                <div className={`score-interpretation ${affinityInterp.class}`}>
+                                    {affinityInterp.text}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="results-card">
+                            <h3>Score Interpretation</h3>
+                            <p style={{ lineHeight: '1.8', color: '#4b5563' }}>
+                                Your space has <strong className={fearInterp.class}>{fearInterp.text} FEAR</strong> (formality and regulation) 
+                                and <strong className={affinityInterp.class}>{affinityInterp.text} Affinity</strong> characteristics.
+                                {scores.formality > scores.regulation ? (
+                                    <> <strong>Formality</strong> is your primary constraint - the physical design and aesthetic create rigidity.</>
+                                ) : (
+                                    <> <strong>Regulation</strong> is your primary constraint - rules and access controls limit spontaneity.</>
+                                )}
+                            </p>
+                        </div>
+
+                        <div className="results-card">
+                            <h3>Matrix Position</h3>
+                            <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                                <div style={{ display: 'inline-block', padding: '20px', background: 'white', borderRadius: '8px' }}>
+                                    <strong>Informal:</strong> {matrixPosition.x.toFixed(0)}% | <strong>Local:</strong> {matrixPosition.y.toFixed(0)}%
+                                </div>
+                            </div>
+                            <p style={{ color: '#4b5563', textAlign: 'center' }}>
+                                {matrixPosition.x > 50 && matrixPosition.y > 50 && 
+                                    'Your space is in the Heterotopic Affinity Space (HAS) quadrant - ideal! ⭐'}
+                                {matrixPosition.x > 50 && matrixPosition.y <= 50 && 
+                                    'Your space is in the Progressive quadrant - informal but institutionally controlled.'}
+                                {matrixPosition.x <= 50 && matrixPosition.y > 50 && 
+                                    'Your space is in the Structured Community quadrant - attempting to be local but constrained by formal design.'}
+                                {matrixPosition.x <= 50 && matrixPosition.y <= 50 && 
+                                    'Your space is in the Traditional quadrant - high formality and institutional control.'}
+                            </p>
+                        </div>
+
+                        <div className="results-card">
+                            <div className="recommendations">
+                                <h4>Recommendations to Reduce FEAR</h4>
+                                <ul>
+                                    {recommendations.map((rec, index) => (
+                                        <li key={index}>{rec}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="button-group">
+                            <button className="btn-secondary" onClick={() => {
+                                setStep(0);
+                                setSpaceData({ name: '', type: '', capacity: '', primaryUse: '' });
+                                setFearResponses({});
+                                setAffinityResponses({});
+                                setMatrixPosition({ x: 50, y: 50 });
+                            }}>
+                                Start New Assessment
+                            </button>
+                            <button className="btn-randomize" onClick={() => {
+                                randomizeResponses();
+                                // Force re-render by briefly going back and forward
+                                setStep(4);
+                                setTimeout(() => setStep(5), 10);
+                            }}>
+                                🎲 Generate New Random Results
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>FEARless Assessment Tool</h1>
+                        <p>Measuring Formal Environments and Academic Regulation</p>
+                    </div>
+
+                    <div className="content">
+                        {step > 0 && step < 5 && (
+                            <>
+                                <div className="progress-bar">
+                                    <div className="progress-fill" style={{ width: `${progress}%` }} />
+                                </div>
+                                <div className="progress-text">
+                                    Step {step} of {totalSteps - 1}
+                                </div>
+                            </>
+                        )}
+
+                        {step === 0 && renderIntro()}
+                        {step === 1 && renderSpaceInfo()}
+                        {step === 2 && renderFearScale()}
+                        {step === 3 && renderAffinityScale()}
+                        {step === 4 && renderMatrix()}
+                        {step === 5 && renderResults()}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<FearlessApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
