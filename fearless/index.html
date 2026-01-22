@@ -577,6 +577,7 @@
 
                 Object.entries(fearResponses).forEach(([key, value]) => {
                     const item = fearItems.find(i => i.id === key);
+                    if (!item) return;
                     const score = item.reverse ? (8 - value) : value;
 
                     if (item.dimension === 'Formality') {
@@ -593,13 +594,14 @@
                 const fearTotal = (formality + regulation) / 2;
 
                 // Calculate Affinity score (Social Connectedness - X axis)
-                const affinitySum = Object.values(affinityResponses).reduce((sum, val) => sum + val, 0);
-                const affinityScore = affinitySum / affinityItems.length;
+                const affinityValues = Object.values(affinityResponses);
+                const affinitySum = affinityValues.reduce((sum, val) => sum + val, 0);
+                const affinityScore = affinityValues.length > 0 ? affinitySum / affinityValues.length : 0;
 
                 // Calculate Framework Axes (matching published model)
                 // Y-axis: Spatial Otherness = INVERSE of FEAR (high FEAR = low otherness)
                 // Scale from 1-7, invert: high otherness = low FEAR
-                const spatialOtherness = 8 - fearTotal; // Inverted: high FEAR (7) → low otherness (1)
+                const spatialOtherness = fearTotal > 0 ? (8 - fearTotal) : 4; // Inverted: high FEAR (7) → low otherness (1)
 
                 // X-axis: Social Connectedness = Affinity score (direct mapping)
                 const socialConnectedness = affinityScore;
@@ -833,6 +835,7 @@
                         <select
                             value={spaceData.type}
                             onChange={(e) => setSpaceData({...spaceData, type: e.target.value})}
+                            required
                         >
                             <option value="">Select a type...</option>
                             <option value="lecture">Traditional lecture hall</option>
@@ -854,6 +857,7 @@
                             placeholder="Number of people"
                             value={spaceData.capacity}
                             onChange={(e) => setSpaceData({...spaceData, capacity: e.target.value})}
+                            min="1"
                         />
                     </div>
 
@@ -862,6 +866,7 @@
                         <select
                             value={spaceData.primaryUse}
                             onChange={(e) => setSpaceData({...spaceData, primaryUse: e.target.value})}
+                            required
                         >
                             <option value="">Select primary use...</option>
                             <option value="instruction">Scheduled instruction</option>
