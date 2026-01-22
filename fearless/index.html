@@ -8,6 +8,7 @@
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
     <style>
+        /* ===== RESPONSIVE FOUNDATION ===== */
         * {
             margin: 0;
             padding: 0;
@@ -21,6 +22,12 @@
             padding: 20px;
         }
 
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+        }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -28,6 +35,13 @@
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 8px;
+            }
         }
 
         .header {
@@ -1671,3 +1685,66 @@
     </script>
 </body>
 </html>
+<style>
+/* ===== MOBILE RESPONSIVE OVERRIDES ===== */
+@media (max-width: 768px) {
+    .content {
+        padding: 20px !important;
+    }
+    
+    .header h1 {
+        font-size: 1.75em !important;
+    }
+    
+    .section-title {
+        font-size: 1.5em !important;
+    }
+    
+    .results-card,
+    .score-card,
+    .form-group {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .score-display {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .button-group {
+        flex-direction: column !important;
+    }
+    
+    .btn-primary,
+    .btn-secondary,
+    .btn-randomize {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+    
+    .matrix-canvas {
+        height: 350px !important;
+    }
+    
+    .matrix-label {
+        font-size: 0.7em !important;
+        max-width: 100px !important;
+    }
+    
+    .slider-labels {
+        font-size: 0.75em !important;
+    }
+    
+    .slider-labels span {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .score-display {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+</style>
