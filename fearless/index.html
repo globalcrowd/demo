@@ -195,85 +195,138 @@
             border: 2px solid #e5e7eb;
             border-radius: 8px;
             position: relative;
-            background: linear-gradient(to right, rgba(239,68,68,0.05) 0%, rgba(16,185,129,0.05) 100%),
-                        linear-gradient(to top, rgba(59,130,246,0.05) 0%, rgba(251,191,36,0.05) 100%);
+            background: #fafafa;
+            cursor: crosshair;
         }
 
         .matrix-axis {
             position: absolute;
-            background: #9ca3af;
+            background: #4b5563;
+            z-index: 1;
         }
 
         .matrix-axis-x {
-            bottom: 0;
+            top: 50%;
             left: 0;
             right: 0;
             height: 2px;
+            transform: translateY(-50%);
         }
 
         .matrix-axis-y {
-            left: 0;
+            left: 50%;
             top: 0;
             bottom: 0;
             width: 2px;
+            transform: translateX(-50%);
         }
 
         .matrix-label {
             position: absolute;
-            font-size: 0.9em;
-            color: #4b5563;
+            font-size: 0.85em;
+            color: #1f2937;
             font-weight: 600;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            z-index: 2;
         }
 
         .matrix-label-x-left {
-            bottom: -30px;
+            top: 50%;
             left: 10px;
+            transform: translateY(-50%);
         }
 
         .matrix-label-x-right {
-            bottom: -30px;
+            top: 50%;
             right: 10px;
+            transform: translateY(-50%);
         }
 
         .matrix-label-y-bottom {
-            top: calc(100% - 20px);
-            left: -120px;
-            transform: rotate(-90deg);
-            transform-origin: right center;
+            left: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
         }
 
         .matrix-label-y-top {
-            bottom: calc(100% - 20px);
-            left: -120px;
-            transform: rotate(-90deg);
-            transform-origin: right center;
+            left: 50%;
+            top: 10px;
+            transform: translateX(-50%);
         }
 
         .matrix-marker {
             position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #3b82f6;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
             border: 4px solid white;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            cursor: move;
+            cursor: pointer;
             box-shadow: 0 4px 12px rgba(59,130,246,0.4);
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            user-select: none;
         }
 
         .matrix-marker:hover {
-            transform: translate(-50%, -50%) scale(1.1);
+            transform: translate(-50%, -50%) scale(1.15);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.6);
+        }
+
+        .matrix-marker:active {
+            transform: translate(-50%, -50%) scale(1.05);
         }
 
         .quadrant-label {
             position: absolute;
             font-size: 0.75em;
-            color: #9ca3af;
-            font-style: italic;
+            color: #6b7280;
+            font-weight: 600;
             padding: 8px;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.9);
             border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            z-index: 0;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .emoji-large {
+            font-size: 2em;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
         }
 
         .button-group {
@@ -448,34 +501,39 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // FEAR Scale Items (shortened version)
+        // FEAR Scale Items - REVISED to match published framework
+        // Dimension 1: FORMALITY (impacts Spatial Otherness)
+        // Dimension 2: REGULATION (impacts both axes)
         const fearItems = [
-            { id: 'FORM1', dimension: 'Formality', text: 'The furniture in this space is fixed and cannot be rearranged.', reverse: false },
-            { id: 'FORM2', dimension: 'Formality', text: 'This space has a clearly defined "front" where instructors/presenters are expected to be.', reverse: false },
-            { id: 'FORM3', dimension: 'Formality', text: 'The design reinforces traditional roles (instructor as authority, students as recipients).', reverse: false },
-            { id: 'FORM4', dimension: 'Formality', text: 'This space feels like it "belongs" to the institution rather than its users.', reverse: false },
-            { id: 'FORM5', dimension: 'Formality', text: 'The aesthetic feels institutional and standardized (not comfortable/inviting).', reverse: false },
-            { id: 'FORM6', dimension: 'Formality', text: 'Anyone can take on teaching or leading roles here, regardless of status.', reverse: true },
-            { id: 'REG1', dimension: 'Regulation', text: 'You need to book or reserve this space in advance to use it.', reverse: false },
-            { id: 'REG2', dimension: 'Regulation', text: 'Access to this space is restricted (limited to certain people or times).', reverse: false },
-            { id: 'REG3', dimension: 'Regulation', text: 'There are strict rules about how this space can be used (e.g., no food, no moving furniture).', reverse: false },
-            { id: 'REG4', dimension: 'Regulation', text: 'This space feels monitored or supervised.', reverse: false },
-            { id: 'REG5', dimension: 'Regulation', text: 'Users have freedom to use this space in creative or unexpected ways.', reverse: true },
-            { id: 'REG6', dimension: 'Regulation', text: 'If you use this space "wrong" (not as intended), you might be corrected.', reverse: false },
+            { id: 'FORM1', dimension: 'Formality', axis: 'Otherness', text: 'This space looks and feels like a typical institutional/academic environment (standardized, formal aesthetic).', reverse: false },
+            { id: 'FORM2', dimension: 'Formality', axis: 'Otherness', text: 'The design of this space clearly signals "serious academic work only".', reverse: false },
+            { id: 'FORM3', dimension: 'Formality', axis: 'Otherness', text: 'This space could be mistaken for a traditional classroom or lecture hall.', reverse: false },
+            { id: 'FORM4', dimension: 'Formality', axis: 'Otherness', text: 'The space aesthetic is warm, comfortable, and unconventional (NOT institutional).', reverse: true },
+            { id: 'FORM5', dimension: 'Formality', axis: 'Connectedness', text: 'There are clear distinctions between "teacher/staff" and "student" areas in this space.', reverse: false },
+            { id: 'FORM6', dimension: 'Formality', axis: 'Connectedness', text: 'The design reinforces traditional hierarchical roles (instructor as authority, students as recipients).', reverse: false },
+            { id: 'REG1', dimension: 'Regulation', axis: 'Both', text: 'You need to book or reserve this space in advance to use it.', reverse: false },
+            { id: 'REG2', dimension: 'Regulation', axis: 'Both', text: 'Access to this space is restricted to certain people, courses, or times.', reverse: false },
+            { id: 'REG3', dimension: 'Regulation', axis: 'Connectedness', text: 'There are strict rules about how this space can be used (e.g., no food, quiet only, prescribed activities).', reverse: false },
+            { id: 'REG4', dimension: 'Regulation', axis: 'Otherness', text: 'This space feels monitored or supervised (cameras, staff oversight, sign-in requirements).', reverse: false },
+            { id: 'REG5', dimension: 'Regulation', axis: 'Both', text: 'Users have freedom to use this space in creative, unexpected, or unconventional ways.', reverse: true },
+            { id: 'REG6', dimension: 'Regulation', axis: 'Connectedness', text: 'If you used this space "wrong" or non-traditionally, you would be corrected or asked to leave.', reverse: false },
         ];
 
-        // Affinity Items
+        // Affinity Items - MEASURING SOCIAL CONNECTEDNESS
+        // Based on Gee's affinity space principles from the paper
         const affinityItems = [
-            { id: 'AFF1', text: 'People with different levels of expertise (novices and experts) use this space together.' },
-            { id: 'AFF2', text: 'Leadership and teaching roles shift depending on who knows what, not fixed hierarchies.' },
-            { id: 'AFF3', text: 'People can participate in different ways (observing, making, teaching, helping) and all are valued.' },
-            { id: 'AFF4', text: 'This space brings together people from different backgrounds, disciplines, or years.' },
-            { id: 'AFF5', text: 'What you know and can contribute matters more than your formal credentials or status.' },
-            { id: 'AFF6', text: 'Unplanned interactions and serendipitous learning happen frequently here.' },
+            { id: 'AFF1', text: 'People with different levels of expertise (novices and experts) learn together in this space, sharing knowledge freely.' },
+            { id: 'AFF2', text: 'Leadership and helping roles shift based on who knows what, not fixed by formal status or credentials.' },
+            { id: 'AFF3', text: 'There are multiple ways to participate and contribute (observing, making, teaching, helping) - all are valued equally.' },
+            { id: 'AFF4', text: 'This space brings together people from different backgrounds, disciplines, years, or communities.' },
+            { id: 'AFF5', text: 'What you know and can contribute matters more than your formal credentials, title, or year of study.' },
+            { id: 'AFF6', text: 'Spontaneous, unplanned interactions and collaborative learning happen frequently here (not just scheduled activities).' },
+            { id: 'AFF7', text: 'I feel a strong sense of connection to other people who use this space, even if I don\'t know them personally.' },
+            { id: 'AFF8', text: 'People in this space share a common purpose or passion that brings them together (beyond just completing assignments).' },
         ];
 
         function FearlessApp() {
-            const [step, setStep] = useState(0); // 0: intro, 1: space info, 2: FEAR, 3: Affinity, 4: Matrix, 5: Results
+            const [step, setStep] = useState(0); // 0: intro, 0.5: framework explanation, 1: space info, 2: FEAR, 3: Affinity, 4: Matrix, 5: Results
             const [spaceData, setSpaceData] = useState({
                 name: '',
                 type: '',
@@ -485,6 +543,7 @@
             const [fearResponses, setFearResponses] = useState({});
             const [affinityResponses, setAffinityResponses] = useState({});
             const [matrixPosition, setMatrixPosition] = useState({ x: 50, y: 50 });
+            const [isDragging, setIsDragging] = useState(false);
 
             const totalSteps = 5;
             const progress = (step / totalSteps) * 100;
@@ -512,7 +571,7 @@
             };
 
             const calculateScores = () => {
-                // Calculate FEAR score
+                // Calculate FEAR dimensions
                 let formalitySum = 0, regulationSum = 0;
                 let formalityCount = 0, regulationCount = 0;
 
@@ -533,11 +592,26 @@
                 const regulation = regulationCount > 0 ? regulationSum / regulationCount : 0;
                 const fearTotal = (formality + regulation) / 2;
 
-                // Calculate Affinity score
+                // Calculate Affinity score (Social Connectedness - X axis)
                 const affinitySum = Object.values(affinityResponses).reduce((sum, val) => sum + val, 0);
                 const affinityScore = affinitySum / affinityItems.length;
 
-                return { formality, regulation, fearTotal, affinityScore };
+                // Calculate Framework Axes (matching published model)
+                // Y-axis: Spatial Otherness = INVERSE of FEAR (high FEAR = low otherness)
+                // Scale from 1-7, invert: high otherness = low FEAR
+                const spatialOtherness = 8 - fearTotal; // Inverted: high FEAR (7) → low otherness (1)
+
+                // X-axis: Social Connectedness = Affinity score (direct mapping)
+                const socialConnectedness = affinityScore;
+
+                return { 
+                    formality, 
+                    regulation, 
+                    fearTotal, 
+                    affinityScore,
+                    spatialOtherness,    // Y-axis (1-7, higher = more otherness)
+                    socialConnectedness  // X-axis (1-7, higher = more connectedness)
+                };
             };
 
             const getFearInterpretation = (score) => {
@@ -588,31 +662,152 @@
                         and Academic Regulation (FEAR)</strong> might be constraining affinity-based learning.
                     </p>
                     <div className="results-card">
-                        <h3>What You'll Get:</h3>
+                        <h3>✨ What You'll Get:</h3>
                         <ul style={{ listStyle: 'none', padding: '20px' }}>
                             <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
-                                ✓ FEAR Score (Formality + Regulation)
+                                📊 FEAR Score (Formality + Regulation)
                             </li>
                             <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
-                                ✓ Affinity Space Characteristics Rating
+                                🤝 Affinity Space Characteristics Rating
                             </li>
                             <li style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
-                                ✓ Position on FEARless Matrix
+                                🗺️ Position on FEARless Matrix
                             </li>
                             <li style={{ padding: '10px 0' }}>
-                                ✓ Actionable Recommendations
+                                💡 Actionable Recommendations
                             </li>
                         </ul>
                     </div>
                     <div className="button-group">
-                        <button className="btn-primary" onClick={() => setStep(1)}>
-                            Start Assessment
+                        <button className="btn-primary" onClick={() => setStep(0.5)}>
+                            📚 Learn About the Framework First
+                        </button>
+                        <button className="btn-secondary" onClick={() => setStep(1)}>
+                            Skip to Assessment →
                         </button>
                         <button className="btn-randomize" onClick={() => {
                             randomizeResponses();
                             setStep(5);
                         }}>
                             🎲 See Random Example
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderFrameworkExplanation = () => (
+                <div className="animate-in">
+                    <h2 className="section-title">📚 Understanding the FEARless Framework</h2>
+                    <p className="section-description">
+                        Before we assess your space, let's understand what we're measuring...
+                    </p>
+
+                    <div className="results-card" style={{ background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', border: '2px solid #fbbf24' }}>
+                        <h3>🔍 What is FEAR?</h3>
+                        <p style={{ lineHeight: '1.8', fontSize: '1.05em' }}>
+                            <strong>FEAR = Formal Environments and Academic Regulation</strong>
+                        </p>
+                        <p style={{ lineHeight: '1.8', marginTop: '10px' }}>
+                            FEAR-full spaces are traditional learning environments where:
+                        </p>
+                        <ul style={{ marginTop: '10px', marginLeft: '20px', lineHeight: '1.8' }}>
+                            <li>🏛️ Spaces look and feel institutional (standardized aesthetic)</li>
+                            <li>📋 Strict rules control how you can use the space</li>
+                            <li>👀 You feel monitored or supervised</li>
+                            <li>🚫 Booking systems and access restrictions limit spontaneity</li>
+                            <li>👔 Traditional hierarchies are reinforced (teacher vs student)</li>
+                        </ul>
+                    </div>
+
+                    <div className="results-card" style={{ background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', border: '2px solid #3b82f6', marginTop: '20px' }}>
+                        <h3>🎯 The Two Key Dimensions</h3>
+                        
+                        <div style={{ marginTop: '15px' }}>
+                            <h4 style={{ color: '#1f2937', marginBottom: '10px' }}>
+                                <span className="emoji-large" style={{ animationDelay: '0s' }}>🤝</span> 
+                                Social Connectedness (X-axis)
+                            </h4>
+                            <p style={{ lineHeight: '1.8', marginLeft: '20px' }}>
+                                Do people collaborate, share knowledge, and form communities? 
+                                Based on Gee's affinity space principles - where expertise is distributed, 
+                                leadership is fluid, and everyone can contribute regardless of status.
+                            </p>
+                        </div>
+
+                        <div style={{ marginTop: '20px' }}>
+                            <h4 style={{ color: '#1f2937', marginBottom: '10px' }}>
+                                <span className="emoji-large" style={{ animationDelay: '0.5s' }}>✨</span> 
+                                Spatial Otherness (Y-axis)
+                            </h4>
+                            <p style={{ lineHeight: '1.8', marginLeft: '20px' }}>
+                                Does the space break free from traditional institutional norms? 
+                                Is it unconventional, creative, and different from typical classrooms? 
+                                High otherness = low FEAR (informal, flexible, unregulated).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="results-card" style={{ marginTop: '20px' }}>
+                        <h3>🗺️ The Four Quadrants</h3>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '15px' }}>
+                            <div style={{ padding: '15px', background: '#fee2e2', borderRadius: '8px', border: '2px solid #ef4444' }}>
+                                <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>😰</div>
+                                <strong>FEAR-full (Traditional)</strong>
+                                <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
+                                    Low connectedness + Low otherness. 
+                                    Lecture halls, strict classrooms.
+                                </p>
+                            </div>
+
+                            <div style={{ padding: '15px', background: '#fef3c7', borderRadius: '8px', border: '2px solid #f59e0b' }}>
+                                <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🤝</div>
+                                <strong>Affinity Space (Formal Env)</strong>
+                                <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
+                                    High connectedness + Low otherness.
+                                    Active learning classrooms, collaborative libraries.
+                                </p>
+                            </div>
+
+                            <div style={{ padding: '15px', background: '#e0e7ff', borderRadius: '8px', border: '2px solid #6366f1' }}>
+                                <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🎨</div>
+                                <strong>Heterotopia (Regulated)</strong>
+                                <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
+                                    Low connectedness + High otherness.
+                                    Unconventional but lacking community.
+                                </p>
+                            </div>
+
+                            <div style={{ padding: '15px', background: '#d1fae5', borderRadius: '8px', border: '2px solid #10b981' }}>
+                                <div style={{ fontSize: '1.5em', marginBottom: '5px' }}>🎉</div>
+                                <strong>FEAR-less (HAS) ⭐</strong>
+                                <p style={{ fontSize: '0.9em', marginTop: '5px', lineHeight: '1.5' }}>
+                                    High connectedness + High otherness.
+                                    The Foundry, game jams, maker spaces!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="results-card" style={{ background: 'linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%)', border: '2px solid #8b5cf6', marginTop: '20px' }}>
+                        <h3>🚀 Why Does This Matter?</h3>
+                        <p style={{ lineHeight: '1.8' }}>
+                            Research shows that <strong>FEAR-less spaces (Heterotopic Affinity Spaces)</strong> are where 
+                            the magic happens:
+                        </p>
+                        <ul style={{ marginTop: '10px', marginLeft: '20px', lineHeight: '1.8' }}>
+                            <li>💡 Enhanced learner agency and autonomy</li>
+                            <li>🌊 More frequent "flow states" (deep engagement)</li>
+                            <li>🤝 Stronger social connections and collaboration</li>
+                            <li>🎯 Greater motivation and passion for projects</li>
+                            <li>⚡ Off-task lateral moments that lead to creative breakthroughs</li>
+                        </ul>
+                    </div>
+
+                    <div className="button-group" style={{ marginTop: '30px' }}>
+                        <button className="btn-secondary" onClick={() => setStep(0)}>← Back</button>
+                        <button className="btn-primary" onClick={() => setStep(1)}>
+                            Got It! Let's Assess My Space →
                         </button>
                     </div>
                 </div>
@@ -692,44 +887,47 @@
             );
 
             const renderFearScale = () => (
-                <div>
-                    <h2 className="section-title">FEAR Scale Assessment</h2>
+                <div className="animate-in">
+                    <h2 className="section-title">📋 FEAR Scale Assessment</h2>
                     <p className="section-description">
                         Rate how much you agree with each statement about <strong>{spaceData.name || 'this space'}</strong>.
                     </p>
 
-                    {fearItems.map((item, index) => (
-                        <div key={item.id} className="slider-container">
-                            <div className="slider-question">
-                                <strong>Question {index + 1} of {fearItems.length}</strong> ({item.dimension})
-                                <br />
-                                {item.text}
-                            </div>
-                            <div className="slider-wrapper">
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="7"
-                                    value={fearResponses[item.id] || 4}
-                                    onChange={(e) => setFearResponses({
-                                        ...fearResponses,
-                                        [item.id]: parseInt(e.target.value)
-                                    })}
-                                />
-                                <div className="slider-labels">
-                                    <span>1 - Strongly Disagree</span>
-                                    <span>4 - Neutral</span>
-                                    <span>7 - Strongly Agree</span>
+                    {fearItems.map((item, index) => {
+                        const emoji = item.dimension === 'Formality' ? '🏛️' : '📋';
+                        return (
+                            <div key={item.id} className="slider-container animate-in" style={{ animationDelay: `${index * 0.05}s` }}>
+                                <div className="slider-question">
+                                    <strong>{emoji} Question {index + 1} of {fearItems.length}</strong> ({item.dimension})
+                                    <br />
+                                    {item.text}
                                 </div>
-                                <div className="slider-value">
-                                    {fearResponses[item.id] || 4}
+                                <div className="slider-wrapper">
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="7"
+                                        value={fearResponses[item.id] || 4}
+                                        onChange={(e) => setFearResponses({
+                                            ...fearResponses,
+                                            [item.id]: parseInt(e.target.value)
+                                        })}
+                                    />
+                                    <div className="slider-labels">
+                                        <span>1 - Strongly Disagree 😊</span>
+                                        <span>4 - Neutral 😐</span>
+                                        <span>7 - Strongly Agree 😰</span>
+                                    </div>
+                                    <div className="slider-value">
+                                        {fearResponses[item.id] || 4}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
 
                     <div className="button-group">
-                        <button className="btn-secondary" onClick={() => setStep(1)}>Back</button>
+                        <button className="btn-secondary" onClick={() => setStep(1)}>← Back</button>
                         <button className="btn-randomize" onClick={() => {
                             const random = {};
                             fearItems.forEach(item => random[item.id] = Math.floor(Math.random() * 7) + 1);
@@ -738,23 +936,23 @@
                             🎲 Randomize All
                         </button>
                         <button className="btn-primary" onClick={() => setStep(3)}>
-                            Next: Affinity Assessment
+                            Next: Affinity Assessment 🤝
                         </button>
                     </div>
                 </div>
             );
 
             const renderAffinityScale = () => (
-                <div>
-                    <h2 className="section-title">Affinity Characteristics</h2>
+                <div className="animate-in">
+                    <h2 className="section-title">🤝 Affinity Characteristics</h2>
                     <p className="section-description">
                         To what extent does <strong>{spaceData.name || 'this space'}</strong> exhibit these characteristics?
                     </p>
 
                     {affinityItems.map((item, index) => (
-                        <div key={item.id} className="slider-container">
+                        <div key={item.id} className="slider-container animate-in" style={{ animationDelay: `${index * 0.05}s` }}>
                             <div className="slider-question">
-                                <strong>Question {index + 1} of {affinityItems.length}</strong>
+                                <strong>✨ Question {index + 1} of {affinityItems.length}</strong>
                                 <br />
                                 {item.text}
                             </div>
@@ -770,9 +968,9 @@
                                     })}
                                 />
                                 <div className="slider-labels">
-                                    <span>1 - Not at all</span>
-                                    <span>4 - Moderately</span>
-                                    <span>7 - Very much</span>
+                                    <span>1 - Not at all 😔</span>
+                                    <span>4 - Moderately 😐</span>
+                                    <span>7 - Very much 🎉</span>
                                 </div>
                                 <div className="slider-value">
                                     {affinityResponses[item.id] || 4}
@@ -782,7 +980,7 @@
                     ))}
 
                     <div className="button-group">
-                        <button className="btn-secondary" onClick={() => setStep(2)}>Back</button>
+                        <button className="btn-secondary" onClick={() => setStep(2)}>← Back</button>
                         <button className="btn-randomize" onClick={() => {
                             const random = {};
                             affinityItems.forEach(item => random[item.id] = Math.floor(Math.random() * 7) + 1);
@@ -791,71 +989,108 @@
                             🎲 Randomize All
                         </button>
                         <button className="btn-primary" onClick={() => setStep(4)}>
-                            Next: Position on Matrix
+                            Next: Position on Matrix 🗺️
                         </button>
                     </div>
                 </div>
             );
 
             const renderMatrix = () => {
-                const handleMatrixClick = (e) => {
+                const handleMatrixInteraction = (e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    const x = ((e.clientX - rect.left) / rect.width) * 100;
-                    const y = ((rect.height - (e.clientY - rect.top)) / rect.height) * 100; // Invert Y
+                    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+                    const y = Math.max(0, Math.min(100, ((rect.height - (e.clientY - rect.top)) / rect.height) * 100));
                     setMatrixPosition({ x, y });
+                };
+
+                const handleMouseDown = (e) => {
+                    setIsDragging(true);
+                    handleMatrixInteraction(e);
+                };
+
+                const handleMouseMove = (e) => {
+                    if (isDragging) {
+                        handleMatrixInteraction(e);
+                    }
+                };
+
+                const handleMouseUp = () => {
+                    setIsDragging(false);
                 };
 
                 return (
                     <div>
-                        <h2 className="section-title">Position on FEARless Matrix</h2>
+                        <h2 className="section-title">🗺️ Position on FEARless Matrix</h2>
                         <p className="section-description">
-                            Click anywhere on the matrix to position <strong>{spaceData.name || 'this space'}</strong>.
+                            Click anywhere on the matrix to position <strong>{spaceData.name || 'this space'}</strong>. 
+                            You can also drag the marker around!
                         </p>
 
                         <div className="matrix-container">
-                            <div className="matrix-canvas" onClick={handleMatrixClick}>
-                                {/* Axes */}
+                            <div 
+                                className="matrix-canvas" 
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                                style={{ cursor: isDragging ? 'grabbing' : 'crosshair' }}
+                            >
+                                {/* Center cross axes */}
                                 <div className="matrix-axis matrix-axis-x"></div>
                                 <div className="matrix-axis matrix-axis-y"></div>
 
-                                {/* Labels */}
-                                <div className="matrix-label matrix-label-x-left">FORMAL</div>
-                                <div className="matrix-label matrix-label-x-right">INFORMAL</div>
-                                <div className="matrix-label matrix-label-y-bottom">ACADEMIC / INSTITUTIONAL</div>
-                                <div className="matrix-label matrix-label-y-top">LOCAL / ALTRUISTIC</div>
+                                {/* Axis labels */}
+                                <div className="matrix-label matrix-label-x-left">
+                                    😔 Low Connectedness
+                                </div>
+                                <div className="matrix-label matrix-label-x-right">
+                                    🤝 High Connectedness
+                                </div>
+                                <div className="matrix-label matrix-label-y-bottom">
+                                    😰 Low Otherness (High FEAR)
+                                </div>
+                                <div className="matrix-label matrix-label-y-top">
+                                    ✨ High Otherness (Low FEAR)
+                                </div>
 
                                 {/* Quadrant labels */}
-                                <div className="quadrant-label" style={{ left: '10px', bottom: '10px' }}>
-                                    Traditional
+                                <div className="quadrant-label" style={{ left: '5%', bottom: '5%' }}>
+                                    😰 FEAR-full<br/><small>Traditional</small>
                                 </div>
-                                <div className="quadrant-label" style={{ right: '10px', bottom: '10px' }}>
-                                    Progressive
+                                <div className="quadrant-label" style={{ right: '5%', bottom: '5%' }}>
+                                    🤝 Affinity Space<br/><small>Formal Env</small>
                                 </div>
-                                <div className="quadrant-label" style={{ left: '10px', top: '10px' }}>
-                                    Structured Community
+                                <div className="quadrant-label" style={{ left: '5%', top: '5%' }}>
+                                    🎨 Heterotopia<br/><small>Regulated</small>
                                 </div>
-                                <div className="quadrant-label" style={{ right: '10px', top: '10px' }}>
-                                    Heterotopic Affinity Space ⭐
+                                <div className="quadrant-label" style={{ right: '5%', top: '5%' }}>
+                                    🎉 FEAR-less ⭐<br/><small>HAS</small>
                                 </div>
 
-                                {/* Marker */}
+                                {/* Marker with emoji */}
                                 <div
                                     className="matrix-marker"
                                     style={{
                                         left: `${matrixPosition.x}%`,
-                                        bottom: `${matrixPosition.y}%`
+                                        bottom: `${matrixPosition.y}%`,
+                                        cursor: isDragging ? 'grabbing' : 'grab'
                                     }}
-                                    title="Drag or click to reposition"
-                                />
+                                    onMouseDown={(e) => {
+                                        e.stopPropagation();
+                                        setIsDragging(true);
+                                    }}
+                                >
+                                    📍
+                                </div>
                             </div>
                         </div>
 
                         <div style={{ textAlign: 'center', marginTop: '20px', color: '#6b7280' }}>
-                            Current Position: ({matrixPosition.x.toFixed(0)}% Informal, {matrixPosition.y.toFixed(0)}% Local)
+                            📊 Current Position: <strong>{matrixPosition.x.toFixed(0)}% Connectedness</strong>, <strong>{matrixPosition.y.toFixed(0)}% Otherness</strong>
                         </div>
 
                         <div className="button-group">
-                            <button className="btn-secondary" onClick={() => setStep(3)}>Back</button>
+                            <button className="btn-secondary" onClick={() => setStep(3)}>← Back</button>
                             <button className="btn-randomize" onClick={() => {
                                 setMatrixPosition({
                                     x: Math.floor(Math.random() * 80) + 10,
@@ -865,7 +1100,7 @@
                                 🎲 Random Position
                             </button>
                             <button className="btn-primary" onClick={() => setStep(5)}>
-                                See Results
+                                See Results 🎉
                             </button>
                         </div>
                     </div>
@@ -884,6 +1119,31 @@
                         <p className="section-description">
                             Assessment for <strong>{spaceData.name || 'Your Space'}</strong>
                         </p>
+
+                        <div className="results-card" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', color: 'white', marginBottom: '25px' }}>
+                            <h3 style={{ color: 'white' }}>FEARless Framework Position</h3>
+                            <div className="score-display" style={{ margin: '20px 0' }}>
+                                <div className="score-card" style={{ background: 'rgba(255,255,255,0.95)' }}>
+                                    <div className="score-label">Social Connectedness</div>
+                                    <div className="score-value" style={{ color: scores.socialConnectedness > 5 ? '#10b981' : scores.socialConnectedness > 3.5 ? '#f59e0b' : '#ef4444' }}>
+                                        {scores.socialConnectedness.toFixed(2)}
+                                    </div>
+                                    <div style={{ fontSize: '0.85em', color: '#6b7280', marginTop: '5px' }}>
+                                        X-Axis (from Affinity)
+                                    </div>
+                                </div>
+
+                                <div className="score-card" style={{ background: 'rgba(255,255,255,0.95)' }}>
+                                    <div className="score-label">Spatial Otherness</div>
+                                    <div className="score-value" style={{ color: scores.spatialOtherness > 5 ? '#10b981' : scores.spatialOtherness > 3.5 ? '#f59e0b' : '#ef4444' }}>
+                                        {scores.spatialOtherness.toFixed(2)}
+                                    </div>
+                                    <div style={{ fontSize: '0.85em', color: '#6b7280', marginTop: '5px' }}>
+                                        Y-Axis (inverse of FEAR)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div className="score-display">
                             <div className="score-card">
@@ -928,18 +1188,24 @@
                             <h3>Matrix Position</h3>
                             <div style={{ textAlign: 'center', margin: '20px 0' }}>
                                 <div style={{ display: 'inline-block', padding: '20px', background: 'white', borderRadius: '8px' }}>
-                                    <strong>Informal:</strong> {matrixPosition.x.toFixed(0)}% | <strong>Local:</strong> {matrixPosition.y.toFixed(0)}%
+                                    <strong>Social Connectedness (X):</strong> {matrixPosition.x.toFixed(0)}% | 
+                                    <strong> Spatial Otherness (Y):</strong> {matrixPosition.y.toFixed(0)}%
                                 </div>
                             </div>
-                            <p style={{ color: '#4b5563', textAlign: 'center' }}>
+                            <div style={{ textAlign: 'center', margin: '15px 0', padding: '15px', background: '#f0f9ff', borderRadius: '8px' }}>
+                                <strong>Based on FEAR & Affinity scores:</strong><br/>
+                                Connectedness: {((scores.socialConnectedness / 7) * 100).toFixed(0)}% | 
+                                Otherness: {((scores.spatialOtherness / 7) * 100).toFixed(0)}%
+                            </div>
+                            <p style={{ color: '#4b5563', textAlign: 'center', lineHeight: '1.6' }}>
                                 {matrixPosition.x > 50 && matrixPosition.y > 50 && 
-                                    'Your space is in the Heterotopic Affinity Space (HAS) quadrant - ideal! ⭐'}
+                                    '🎉 Your space is in the FEAR-less (Heterotopic Affinity Space) quadrant - the ideal! High social connectedness + high spatial otherness. This is where deep learning, agency, and flow states happen. Examples: Foundry, game jams, maker spaces.'}
                                 {matrixPosition.x > 50 && matrixPosition.y <= 50 && 
-                                    'Your space is in the Progressive quadrant - informal but institutionally controlled.'}
+                                    'Your space is an Affinity Space (in Formal Environment) - high connectedness but low otherness. Good collaboration but constrained by traditional/institutional design. Like active learning classrooms or collaborative libraries.'}
                                 {matrixPosition.x <= 50 && matrixPosition.y > 50 && 
-                                    'Your space is in the Structured Community quadrant - attempting to be local but constrained by formal design.'}
+                                    'Your space is a Heterotopia (Academically Regulated) - high otherness but low connectedness. Unconventional space but lacking community. Some learners connect, others want more traditional learning elsewhere.'}
                                 {matrixPosition.x <= 50 && matrixPosition.y <= 50 && 
-                                    'Your space is in the Traditional quadrant - high formality and institutional control.'}
+                                    '⚠️ Your space is FEAR-full (Traditional Learning) - low connectedness and low otherness. High formality and regulation limit both social connection and spatial innovation. Most lecture halls and strict classrooms fall here.'}
                             </p>
                         </div>
 
@@ -997,6 +1263,7 @@
                         )}
 
                         {step === 0 && renderIntro()}
+                        {step === 0.5 && renderFrameworkExplanation()}
                         {step === 1 && renderSpaceInfo()}
                         {step === 2 && renderFearScale()}
                         {step === 3 && renderAffinityScale()}
